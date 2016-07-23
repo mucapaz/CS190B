@@ -1,0 +1,258 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0049)http://www.cs.ucsb.edu/~cappello/190B/homework/4/ -->
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="SHORTCUT ICON" href="http://www.cs.ucsb.edu/~cappello/images/favicon.ico">
+  <title>CS 290B: Java-Centric Cluster &amp; Concurrent Computing</title>
+  <link href="./index_files/site.css" rel="stylesheet" type="text/css">
+</head>
+
+<body><div id="StayFocusd-infobar" style="display:none;">
+    <img src="chrome-extension://laankejkbhbdhmipfmgcngdelahlfoji/common/img/eye_19x19_red.png">
+    <span id="StayFocusd-infobar-msg"></span>
+    <span id="StayFocusd-infobar-links">
+        <a id="StayFocusd-infobar-never-show">hide forever</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+        <a id="StayFocusd-infobar-hide">hide once</a>
+    </span>
+</div>
+
+<div id="container">
+
+<div id="top">
+
+<table cellspacing="0" cellpadding="0">
+  <tbody>
+    <tr>
+      <td><a href="https://gauchospace.ucsb.edu/courses/course/view.php?id=11904">
+      	<img alt="" src="./index_files/GauchoMoodleLogo-small.png"></a>
+  	</td>
+    </tr>
+  </tbody>
+</table>
+
+</div> <!-- end top -->
+
+<div id="navbar">
+	
+<table>
+  <tbody>
+    <tr>
+    	<td><a href="http://www.cs.ucsb.edu/~cappello/190B/">
+    		<img src="./index_files/home.gif" alt="Home" border="0"></a>
+			</td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/grades.shtml">Grades</a></td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/homework/">Homework</a></td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/papers.shtml">Papers</a></td>
+      <!--<td><a href="http://www.cs.ucsb.edu/~cappello/190B/people.shtml">People</a></td>-->
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/projects/">Projects</a></td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/resources/">Resources</a></td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/syllabus.shtml">Syllabus</a></td>
+    </tr>
+  </tbody>
+</table>
+
+</div> <!-- end navbar -->
+
+<div id="main">
+
+	<p>
+		<img class="signature" alt="Give a man a program, frustrate him for a day. &lt;i&gt;Teach&lt;/i&gt; a man to program, frustrate him for a lifetime." src="./index_files/buddhabrotPRN.jpg" width="180px">
+	</p>
+
+
+<h1>Assignment 4: <br>Ameliorate communication latency &amp; exploit multi-core computers</h1>
+
+<h2>Purpose</h2>
+
+<p>The purpose of this programming assignment is to: </p>
+
+<ul>
+  <li>Exploit multi-core processors when used as compute servers.</li>
+  <li>Amerliorate communication latency.</li>
+</ul>
+
+<!--
+<h2>Paper Summary</h2>
+
+<p>
+	Submit a 1-page summary, entirely in your own words, of the paper 
+	"<a href="http://cs.ucsb.edu/~cappello/papers/2005pdcs.html">
+	Jicos: A Java-Centric Network Computing Service</a>."
+</p>
+-->
+<h2>Specification</h2>
+
+<h3>Design Document</h3>
+
+<p> 
+	Create a design document that briefly describes your API, if modified from Assignment 3, and your design of the infrastructural enhancements described below.  
+	Identify <i>essential</i> design issues, and how your approach to them is manifested in your object-oriented design.
+	Figures are welcome. 
+	This should be no more than 1 or 2 pages.
+</p>
+
+<h3>Ameliorate communication latency</h3>
+
+<p>
+	Without sacrificing Computer fault-tolerance,
+	enhance your infrastructure, and API, as needed, to reduce communication latency and/or overlap communication with computation.
+</p>
+<p>
+	When JavaSpaces and ComputeFarm were designed, 
+	the Space was envisioned as a shared resource among concurrent clients.
+	Fair use of the Space among such clients precludes them from executing tasks on the Space.
+	Since we now are in an era of cloud computing, where the [virtual] cluster is "owned" by the client, 
+	the issue of fair use of the Space does not exist.
+	Assuming that your design retains the Space to facilitate Computer fault-tolerance, you may wish to introduce Space-runnable tasks.
+</p>
+<p>
+	If you choose to support space-runnable tasks, your design may assign responsibility for deciding to execute a task on the Space to the:
+	</p><ul>
+		<li>Application statically (at compile time), dynamically (during execution of the job), or some combination of these (e.g., defaulting to compile time)</li>
+		<li>Infrastructure dynamically</li>
+		<li>Some combination of the above</li>
+	</ul> 
+
+	Asymptotic analysis tells us that for some applications, if all decomposition and composition tasks are run on the Space,
+	then the application's performance will be degraded.
+	How does your design address this fact?
+<p></p>
+<p>
+	Please present your thinking in your design document.
+</p>
+<p>
+	Beyond Space-runnable tasks, one approach to overlapping task/result communication with task computation is to enable [application-directed]
+	Computer Task caching and Task prefetching.
+	You however may do essentially whatever you want to improve the performance of your applications by hiding communication latency 
+	(i.e., overlapping computation with communication).
+	<!--
+	For example, you may wish to incorporate some form of work-stealing 
+	(e.g., among Computer proxies on the Space or among Computers themselves).
+	Can you <i>prove</i> that your system tolerates Computer faults? 
+	What assumptions are needed?
+	-->
+</p>
+
+<p>
+	Refactor your applications, as necessary, to exploit your performance enhancing features.
+	Such <i>API</i> changes, one would hope, would be minimal.
+</p>
+
+<p>
+	Instrument your system so that your communication latency amelioration enhancements can be turned on or off, 
+	a feature needed to perform the experiments described below.
+</p>
+
+<h3>Exploit multi-core processors when used as compute servers</h3>
+
+<p>
+	JVMs increasingly exploit multiple processors by mapping different threads to different processors.
+	The <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/lang/Runtime.html">java.lang.Runtime</a> method 
+	<code>public int availableProcessors()</code> returns the number of processors available to the Java virtual machine.
+	Let <i>T</i> be positive integer that is some function of the number of available processors.
+	On each Computer, start <i>T</i> threads, each of which executes tasks.
+</p>
+
+<p>Instrument your infrastructore so that this enhancement can be turned on or off.</p>
+
+<h2>Applications</h2>
+
+<p>
+	For all applications, do not arrange to have all tasks run on the Space;
+	this eliminates parallelism and negates the assignment goal of overlapping computation with communication.
+</p>
+
+<p>
+	Do the <!--Mandelbrot,--> Euclidean TSP &amp; Fibonacci number applications, with the following modifications:
+	For your:
+	</p><ul>
+		<!--<li>Mandelbrot set visualizer, use an iteration limit of 4096.</li>-->
+		<li>Fibonacci number application, compute the 20<sup>th</sup> Fibonacci number;</li>
+		<li>Euclidean TSP application: Use the same graph as before.
+			<!--
+			<ul>
+				<li>Implement a stronger lower bound than the cost of a partial tour;</li>
+				<li>Use the following 2D grid graph, which, by my reckoning, has a tour of size 24:</li>
+			</ul>
+			-->
+		</li>
+	</ul> 
+	<!--<img src="TspGraph.png" alt="Traveling Salesman graph" title="Traveling Salesman graph" width="350px" /> -->
+<p></p>
+
+<h3>The clients</h3>
+
+<p>Define clients that instantiate applications as done in the previous assignment.</p>
+
+<h2>Experiments</h2>
+
+<p>The experiment specification is the same as the previous assignment, with 2 differences:</p>
+
+<ul>
+    <li>Run with the number of computers, C = 1 and 8.</li>
+    <li>For each value of C, run 4 experiments: 
+      <ol>
+          <li>communication latency amelioration turned off; single worker thread</li>
+          <li>communication latency amelioration turned off; multiple worker threads</li>
+          <li>communication latency amelioration turned on; single worker thread</li>
+          <li>communication latency amelioration turned on; multiple worker threads</li>
+      </ol>
+    </li>
+</ul>
+
+<p>
+	For each application, for these 8 experiments, give 4 graphs (e.g., bar graphs) of the parallel efficiency (C = 1 vs. C = 8), 1 bar graph for each of the 4 configurations above.
+	You may superimpose the 4 graphs for a particular application.
+	
+</p>
+
+<h2>Deliverables</h2>
+
+<p>
+	The deliverables are the same as those for the previous programming assignment. 
+	Make sure that your documents index includes or links to your:
+</p>
+
+<ul>
+	<li>Design document</li>
+	<!--<li>Administrative information: readme and build.xml files</li>-->
+	<!--<li>Javadoc of your API.</li>-->
+	<li>Experimental data, presented as graphs.</li>
+	<li>Explanation of your experimental data.</li>
+	<li>Description of infrastructure changes that you think would further improve:
+		<ul>
+			<li>performance</li>
+			<li>its measurement of performance.</li>
+		</ul>
+	</li>
+</ul>  
+
+
+</div> <!-- end main -->
+
+<br>
+<hr size="1" noshade="noshade">
+
+<table style="background-color: rgb(254, 254, 254); width: 800px;">
+  <tbody>
+    <tr style="color: rgb(0, 0, 102);">
+        <td style="text-align: left;">
+          &nbsp;<a href="mailto:cappello@cs.ucsb.edu" class="nounderline"><small>cappello@cs.ucsb.edu
+        </small></a></td>
+        <td style="text-align: right;">
+          <small>© Copyright 2010 Peter Cappello</small>
+          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+        </td>
+        <td style="text-align: right;">
+          <small>2016.05.17</small>
+          &nbsp; <!-- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; -->
+        </td>
+        <!-- <td style="text-align: right;"><small>805.893.4383</small>&nbsp;</td> -->
+    </tr>
+  </tbody>
+</table>
+
+</div> <!-- end container-->
+
+
+
+</body></html>

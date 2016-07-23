@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Read-Me</h1>
+
+<h3> Build and run with using Ant </h3>
+
+<p> Change the following "property name="client_file_codebase" location="/cs/student/pazspm/public_html/cs290b/hw1/client/" " inside build.xml to your public_html folder </p>
+
+<p>//Compile classes </p>
+<p>ant compile</p>
+
+<p>//Create client and server jar files</p>
+<p>ant dist</p>
+
+<p>//Create javadocs </p>
+<p>ant javadoc</p>
+
+<p>ant runComputer</p>
+<p>ant runClientTsp</p>
+<p>ant runClientMandelbrot</p>
+
+<h3> Compiling and running without Ant </h3>
+<p>// Compiling api and creating compute.jar </p>
+<p>javac api/*.java </p> 
+<p>jar cvf compute.jar compute\*.class </p> <br>
+
+<p>// Compiling and running server side (system) </p> 
+<p>javac system/Main.java </p>
+<p>java -Djava.security.policy=Security.policy system/Main </p> <br>
+
+<p>// Compiling tasks </p>
+<p>javac tasks/*.java </p> <br>
+
+<p>// Compiling and running clients </p> 
+<p>javac tasks/*.java </p>
+<p>java -Djava.security.policy=Security.policy client/ClientMandelbrotSet  </p>
+<p>java -Djava.security.policy=Security.policy client/ClientEuclideanTsp </p> <br> <br>
+
+<a href="index.html">Home</a> <br>
+
+
+</body>
+</html>

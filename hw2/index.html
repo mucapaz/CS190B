@@ -1,0 +1,616 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0049)http://www.cs.ucsb.edu/~cappello/190B/homework/2/ -->
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="SHORTCUT ICON" href="http://www.cs.ucsb.edu/~cappello/images/favicon.ico">
+  <title>CS 190B: Java-Centric Cluster &amp; Concurrent Computing</title>
+  <link href="./index_files/site.css" rel="stylesheet" type="text/css">
+</head>
+
+<body><div id="StayFocusd-infobar" style="display:none;">
+    <img src="chrome-extension://laankejkbhbdhmipfmgcngdelahlfoji/common/img/eye_19x19_red.png">
+    <span id="StayFocusd-infobar-msg"></span>
+    <span id="StayFocusd-infobar-links">
+        <a id="StayFocusd-infobar-never-show">hide forever</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+        <a id="StayFocusd-infobar-hide">hide once</a>
+    </span>
+</div>
+
+<div id="container">
+
+<div id="top">
+
+<table cellspacing="0" cellpadding="0">
+  <tbody>
+    <tr>
+      <td><a href="https://gauchospace.ucsb.edu/courses/course/view.php?id=11904">
+      	<img alt="" src="./index_files/GauchoMoodleLogo-small.png"></a>
+  	</td>
+    </tr>
+  </tbody>
+</table>
+
+</div> <!-- end top -->
+
+<div id="navbar">
+	
+<table>
+  <tbody>
+    <tr>
+    	<td><a href="http://www.cs.ucsb.edu/~cappello/190B/">
+    		<img src="./index_files/home.gif" alt="Home" border="0"></a>
+			</td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/grades.shtml">Grades</a></td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/homework/">Homework</a></td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/papers.shtml">Papers</a></td>
+      <!--<td><a href="http://www.cs.ucsb.edu/~cappello/190B/people.shtml">People</a></td>-->
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/projects/">Projects</a></td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/resources/">Resources</a></td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/syllabus.shtml">Syllabus</a></td>
+    </tr>
+  </tbody>
+</table>
+
+</div> <!-- end navbar -->
+
+<div id="main">
+
+	<p>
+		<img class="signature" alt="Give a man a program, frustrate him for a day. &lt;i&gt;Teach&lt;/i&gt; a man to program, frustrate him for a lifetime." src="./index_files/buddhabrotPRN.jpg" width="180px">
+	</p>
+
+
+<p>Test</p>
+
+<h1>Assignment 2: A Basic Compute Farm</h1>
+
+<h2>Purpose</h2>
+
+<ul>
+  <li>Expand your experience working with Java RMI</li>
+  <li>Begin to build a Java-centric cluster computing infrastructure.</li>
+  <li>Build limited fault tolerance into your infrastructure.</li>
+  <li>Introduce thread-safety.</li>
+  <li>Use the Replicated Worker design pattern.</li>
+  <li>Use the Remote Proxy design pattern.</li>
+  <li>Use a Producer-Consumer design pattern.</li>
+</ul>
+
+<h2>Motivation</h2>
+
+<p>
+Each large Internet computing project, such as SETI@HOME, tackles some problem that has a simple parallel decomposition.
+We call such "embarrassingly parallel" problems <i>piecework-parallel</i>, indicating that a problem in this class has a piecework decomposition:
+The problem decomposes into objects that implement Task, and whose execute methods return values that can be composed into a solution to the original problem.
+</p>
+
+<p></p><center><img style="width: 680px; height: 500px;" alt="Piecework Decomposition" src="./index_files/piecework.png"></center><p></p>
+<p></p><center><b>Fig. 1: Pieceworktask decomposition topology</b></center><p></p>
+
+<!--
+<h2>Paper Summary</h2>
+
+<p>Submit a 1-page summary, entirely in your own words, of the paper titled, "How to Build a ComputeFarm."</p>
+-->
+
+<h2>Specification</h2>
+
+<p>
+In this assignment, you build a basic compute farm infrastrure for hosting piecework-parallel problems.
+The client decomposes the problem, constructing a set of Task objects.
+These tasks are passed to a Space, which makes them available to compute servers which function much like those in your first assignment.
+The results computed by Computers are returned to the Space.
+The client retrieves results from the Space, composing them into a solution to the original problem.
+</p>
+
+<h3>The API</h3>
+
+<h4>Task</h4>
+
+<!-- <p>The Task interface is unchanged.</p> -->
+
+
+
+<title>Task.java</title>
+
+<style type="text/css">
+<!--
+body {color: #000000; background-color: #ffffff; font-family: Monospaced}
+pre {color: #000000; background-color: #ffffff; font-family: Monospaced}
+table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
+.ST0 {color: #969696; font-family: Monospaced; font-weight: bold}
+.ST1 {font-family: Monospaced; font-weight: bold}
+.comment {color: #969696}
+.literal {color: #0000e6}
+-->
+</style>
+
+
+<pre><span class="literal">package</span> api;
+<span class="literal">import</span> java.io.Serializable;
+<span class="literal">import</span> java.util.concurrent.Callable;
+
+<span class="comment">/**</span>
+<span class="comment"> *</span>
+<span class="comment"> * </span><span class="ST0">@author</span> <span class="comment">Peter</span> <span class="comment">Cappello</span>
+<span class="comment"> * </span><span class="ST0">@param</span> &lt;V&gt; <span class="comment">the</span> <span class="comment">task</span> <span class="comment">return</span> <span class="comment">type</span><span class="comment">.</span>
+ <span class="comment">*/</span>
+<span class="literal">public</span> <span class="literal">interface</span> <span class="ST1">Task</span>&lt;V&gt; <span class="literal">extends</span> Serializable, Callable&lt;V&gt; 
+{ 
+    @Override
+    V <span class="ST1">call</span>(); 
+}
+</pre>
+
+
+
+<h4>An immutable Result container</h4>
+
+<p>Result class has:</p>
+
+<ul>
+	<li>a task execute method's return value.</li>
+	<li>
+		the elapsed time of the task execute method, as seen by the <i>computer</i> that executes it:
+		The code for obtaining this time is not a part of the implementation of Task's execute method;
+		it is part the <i>Computer</i> execute method.
+	</li>
+</ul>
+A definition follows:
+
+
+
+<title>Result.java</title>
+
+<style type="text/css">
+<!--
+body {color: #000000; background-color: #ffffff; font-family: Monospaced}
+pre {color: #000000; background-color: #ffffff; font-family: Monospaced}
+table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
+.ST0 {color: #969696; font-family: Monospaced; font-weight: bold}
+.ST1 {font-family: Monospaced; font-weight: bold}
+.comment {color: #969696}
+.ST2 {color: #009900}
+.literal {color: #0000e6}
+.ST3 {color: #ce7b00; font-family: Monospaced; font-weight: bold}
+.string {color: #ce7b00}
+-->
+</style>
+
+
+<pre><span class="literal">package</span> api;
+<span class="literal">import</span> java.io.Serializable;
+
+<span class="comment">/**</span>
+<span class="comment"> *</span>
+<span class="comment"> * </span><span class="ST0">@author</span> <span class="comment">Peter</span> <span class="comment">Cappello</span>
+<span class="comment"> * </span><span class="ST0">@param</span> &lt;T&gt; <span class="comment">type</span> <span class="comment">of</span> <span class="comment">return</span> <span class="comment">value</span> <span class="comment">of</span> <span class="comment">corresponding</span> <span class="comment">Task</span><span class="comment">.</span>
+ <span class="comment">*/</span>
+<span class="literal">public</span> <span class="literal">class</span> <span class="ST1">Result</span>&lt;T&gt; <span class="literal">implements</span> Serializable
+{
+    <span class="literal">private</span> <span class="literal">final</span> T <span class="ST2">taskReturnValue</span>;
+    <span class="literal">private</span> <span class="literal">final</span> <span class="literal">long</span> <span class="ST2">taskRunTime</span>;
+
+    <span class="literal">public</span> <span class="ST1">Result</span>( T taskReturnValue, <span class="literal">long</span> taskRunTime )
+    {
+        <span class="literal">assert</span> taskReturnValue != <span class="literal">null</span>;
+        <span class="literal">assert</span> taskRunTime &gt;= 0;
+        <span class="literal">this</span>.<span class="ST2">taskReturnValue</span> = taskReturnValue;
+        <span class="literal">this</span>.<span class="ST2">taskRunTime</span> = taskRunTime;
+    }
+
+    <span class="literal">public</span> T <span class="ST1">getTaskReturnValue</span>() { <span class="literal">return</span> <span class="ST2">taskReturnValue</span>; }
+
+    <span class="literal">public</span> <span class="literal">long</span> <span class="ST1">getTaskRunTime</span>() { <span class="literal">return</span> <span class="ST2">taskRunTime</span>; }
+    
+    @Override
+    <span class="literal">public</span> String <span class="ST1">toString</span>()
+    {
+        StringBuilder stringBuilder = <span class="literal">new</span> StringBuilder();
+        stringBuilder.append( getClass() );
+        stringBuilder.append( <span class="string">"</span><span class="ST3">\n</span><span class="ST3">\t</span><span class="string">Execution time:</span><span class="ST3">\n</span><span class="ST3">\t</span><span class="string">"</span> ).append( <span class="ST2">taskRunTime</span> );
+        stringBuilder.append( <span class="string">"</span><span class="ST3">\n</span><span class="ST3">\t</span><span class="string">Return value:</span><span class="ST3">\n</span><span class="ST3">\t</span><span class="string">"</span> ).append( <span class="ST2">taskReturnValue</span>.toString() );
+        <span class="literal">return</span> stringBuilder.toString();
+    }
+}
+
+</pre>
+
+
+
+<h4>The Computer interface</h4>
+
+<p>The Computer interface is not part of the API; the client interacts with the Space, which interacts with Computers as its backend.</p>
+<!--
+<pre>
+package system;
+
+public interface Computer extends Remote
+{
+    Result execute( Task task ) throws RemoteException;
+
+    void exit() throws RemoteException;
+}
+</pre>
+
+-->
+
+<h4>The Space interface</h4>
+
+
+
+<title>Space.java</title>
+
+<style type="text/css">
+<!--
+body {color: #000000; background-color: #ffffff; font-family: Monospaced}
+pre {color: #000000; background-color: #ffffff; font-family: Monospaced}
+table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
+.ST0 {color: #969696; font-family: Monospaced; font-weight: bold}
+.ST1 {font-family: Monospaced; font-weight: bold}
+.comment {color: #969696}
+.ST2 {color: #009900; font-family: Monospaced; font-style: italic}
+.literal {color: #0000e6}
+.string {color: #ce7b00}
+-->
+</style>
+
+
+<pre><span class="literal">package</span> api;
+
+<span class="literal">import</span> java.rmi.Remote;
+<span class="literal">import</span> java.rmi.RemoteException;
+<span class="literal">import</span> java.util.List;
+<span class="literal">import</span> system.Computer;
+
+<span class="comment">/**</span>
+<span class="comment"> *</span>
+<span class="comment"> * </span><span class="ST0">@author</span> <span class="comment">Peter</span> <span class="comment">Cappello</span>
+ <span class="comment">*/</span>
+<span class="literal">public</span> <span class="literal">interface</span> <span class="ST1">Space</span> <span class="literal">extends</span> Remote 
+{
+    <span class="literal">public</span> <span class="literal">static</span> <span class="literal">int</span> <span class="ST2">PORT</span> = 8001;
+    <span class="literal">public</span> <span class="literal">static</span> String <span class="ST2">SERVICE_NAME</span> = <span class="string">"</span><span class="string">Space</span><span class="string">"</span>;
+
+    <span class="literal">void</span> <span class="ST1">putAll</span> ( List&lt;Task&gt; taskList ) <span class="literal">throws</span> RemoteException;
+
+    Result <span class="ST1">take</span>() <span class="literal">throws</span> RemoteException;
+    <!-- <span class="literal">void</span> <span class="ST1">exit</span>() <span class="literal">throws</span> RemoteException; -->
+    <span class="literal">void</span> <span class="ST1">register</span>( Computer computer ) <span class="literal">throws</span> RemoteException;
+}
+</pre>
+
+
+
+<p>
+	The client is responsible for decomposing the problem into a set of Task objects, and passing them to the Space via the putAll method.
+	In principle, these task objects can be processed in parallel by Computers.
+</p>
+<p>
+	(Alternatively, one could put the tasks in 1 at a time, using a putTask( Task task ) remote method.
+	What are the tradeoffs here?)
+</p>
+<p>
+	Since the client puts tasks into the Space and Computer proxies (see below) take tasks from the Space,
+	these interacting threads fit the Producer-Consumer design pattern.
+</p>
+<p>
+	After passing all the task objects to the Space, the client retrieves the associated Result objects via the take method:
+	This method <b>blocks</b> until a Result is available to return the the client.
+	Since Computers put Result objects into the Space and the client "consumes" them, we again see the Producer-Consumer design pattern.
+</p>
+
+<p>
+If a particular Result needs to be associated with a particular Task (e.g., a Mandelbrot Result),
+this information is passed as a component of the Task execute method's return value.
+Based on this association, if it matters, it <i>composes</i> the result <i>values</i>
+into a solution to the original problem.
+</p>
+
+<!--
+<p>
+	The <i>exit</i> method is a deployment convenience:
+	When invoked, the space invokes the exit method on each registered Computer, then exits itself.
+	These exits are implemented via System.exit( 0 ), perhaps after logging some suitable comment that it is going down, with a time stamp.
+	The implementation of each exit method thus cause the invoker to receive a RemoteException.
+</p>
+-->
+
+<h4>The Job interface &amp; JobRunner class</h4>
+
+<p>
+	From a OOD perspective, you may wish to follow the design ideas in the compute farm paper: 
+	Have Job and JobRunner classes that function much the same way.
+	The client then would use these classes to perform the task decomposition/composition,
+	and to interact with the Space on the client's behalf.
+</p>
+<p>
+	The main advantage of doing so is to increase code reuse among different clients<!-- and execution scenarios (see Experiments below)-->.
+	The <b>Don't Repeat Yourself (DRY)</b> design maxim is an <i>energy investment strategy</i> that generally  yields dividends.
+</p>
+
+<h3>The SpaceImpl class </h3>
+
+<ul>
+	<li>Extends UnicastRemoteObject</li>
+  <li>Implements the remote <i>Space</i> interface described above.</li>
+  <!-- <li>Implements a remote interface, called <i>Computer2Space</i>, defined below.</li> -->
+  <li>Has a thread-safe Task queue</li>
+  <li>Has a thread-safe Result queue</li>
+ <li>Tolerates faulty Computers</li>
+ <li>Registers in an RmiRegistry, which both clients and Computers consult.</li>
+</ul>
+
+<h4>Faulty Computers</h4>
+
+<p>
+For the purposes of this assignment, a computer is defined to be <i>faulty</i> when a Remote method invoked on it returns a RemoteException.
+The Space accommodates faulty computers:
+If a computer that is running a task returns a RemoteException, the task is assigned to another computer.
+</p>
+
+<p>
+	The Space implementation's main method instantiates a Space object and binds it into its rmiregistry.
+</p>
+
+<h4>ComputerProxy</h4>
+
+<p>
+The space's implementation of <i>register</i> should instantiate a ComputerProxy, which is a separate thread.
+This thread's run method loops forever, removing tasks from a task queue, invoking the associated Computer's execute method with the task as its argument,
+and putting the returned Result object in a data structure for retrieval by the client.
+<i>These data structures need to be thread-safe.</i>
+(Why?)
+The Java <a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/BlockingQueue.html">BlockingQueue</a> interface may be useful,
+as well as its LinkedBlockingQueue implementation.
+</p>
+
+<h3>The Computer Implementation</h3>
+
+<ul>
+	<li>Implements the Remote <i>Computer</i> interface.</li>
+	<li>Extends UnicastRemoteObject</li>
+  <li>
+  	Its main method gets the domain name of its Space's machine from the command line.
+    Using Naming.lookup, it gets a remote reference to the <i>Space</i> service from the rmiregistry.
+  </li>
+  <li>Registers itself with the Space: Computers need <i>not</i> register themselves into an RmiRegistry.</li>
+</ul>
+
+<p></p><center><img style="width: 680px; height: 540px;" alt="" src="./index_files/architecture2.png"></center><p></p>
+
+<p></p><center><b>Fig. 2: The client-Space-Computer architecture.</b> If there is an arc from A to B, then A <i>has a</i> remote reference to B.</center><p></p>
+
+<h3>Thread Safety</h3>
+
+<p>
+	When an object implements a Remote method, the JVM allows that method to be invoked concurrently by multiple threads.
+	Synchronizing access <i>less than necessary</i> leads to race conditions.
+	One way to avoid race conditions is to declare all of the object's methods <i>synchronous</i>.
+	However, this is not always possible.
+	For example, if the object implements the Runnable interface, its run method may not be declared synchronous.
+	In this case, when the run method accesses the object's state, put that code fragment in a synchronous block.
+	Synchronizing <i>more than necessary</i> may lead to deadlock or livelock:
+	Synchronization must be used carefully.
+</p>
+<p>
+	Basic design process for a thread-safe class:
+	</p><ul>
+		<li>Identify the variables that form the object's state;</li>
+		<li>Identify the invariants that constrain the state's variables;</li>
+		<li>Establish a policy for managing concurrent access to the object's state.</li>
+	</ul>
+<p></p>
+
+<!-- <p>Please refer to the textbook for further guidance.</p> -->
+
+<h3>Task classes</h3>
+
+<p>
+For each of the Task classes that you defined in the 1st assignment, define a corresponding Task class that solves <i>part</i> of the original problem.
+The decompositions need not be masterpieces of efficiency.
+For the TSP, partition the set of all possible tours.
+For example, if there are <i>n</i> cities, you can partition the set of tours into <i>n - 1</i> parts: those that begin with cities
+</p>
+
+<ul>
+  <li>0, 1, ...</li>
+  <li>0, 2, ...</li>
+  <li>...</li>
+  <li>0, n - 1, ...</li>
+</ul>
+
+<h3>The clients</h3>
+
+<p>Define a client <i>for each application</i> that:</p>
+
+<ul>
+  <li>gets the domain name of a Space's machine; (It is either hard-coded, obtained from the command line, or read from a file.)</li>
+  <li>gets a remote reference to the Space service from the rmiregistry.</li>
+  <li>for its application (Mandelbrot or TSP), it:
+  <ul>
+    <li>instantiates a large problem instance;</li>
+    <ul>
+      <li>Mandelbrot problem instance parameter values:
+        <ul>
+          <li>Real: -0.7510975859375, imaginary: 0.1315680625.
+              With respect to rendering, handle the y coordinate properly, otherwise your image will be inverted.</li>
+          <li>edge length: 0.01611</li>
+          <li>1024</li>
+          <li>512</li>
+        </ul>
+        The image should look like the figure below, modulo  your color scheme.
+       
+        <!-- (from <a href="http://commons.wikimedia.org/wiki/Image:Mandel_zoom_03_seehorse.jpg">Wikipedia</a>). -->
+        <!-- <p>
+        	<center>
+        		<img src="800px-Mandel_zoom_03_seehorse.jpg" alt="Mandelbrot Set visualization" title="Mandelbrot set visualization" width="520px"/>
+        	</center>
+        </p>
+        -->
+      </li>
+      <li>EuclideanTsp problem instance: use the following list of 12 cities as a problem instance:
+      	Each line that follows has the <i>x</i> and <i>y</i> coordinates of a city, starting with city 0 and ending with city 11:
+<pre>double[][] cities =
+{
+	{ 1, 1 },
+	{ 8, 1 },
+	{ 8, 8 },
+	{ 1, 8 },
+	{ 2, 2 },
+	{ 7, 2 },
+	{ 7, 7 },
+	{ 2, 7 },
+	{ 3, 3 },
+	{ 6, 3 },
+	{ 6, 6 },
+	{ 3, 6 }
+}
+</pre>
+
+<br>If you plot these cities, then (<i>I think</i>) a minimal tour is: 0, 4, 8, 9, 5, 1, 2, 6, 10, 11, 7, 3.
+ The cost of this tour is 20 + 8sqrt(2).
+ (<i>Since I have arrived at this solution by inspection, this may not be optimal.</i>)
+			</li>
+		</ul>
+    	<li>suitably displays the arguments.</li>
+    	<li>decomposes the problem instance into tasks and sends these tasks to the Space via the putAll method;</li>
+    	<li>retrieves the results from the Space via the take method and composes them into a solution to the original problem, which is displayed suitably.</li>
+  </ul>
+  </li>
+</ul>
+<p><img style="width: 680px; height: 540px;" alt="" src="./index_files/MandelbrotSetImage.png"></p>
+<p><img style="width: 680px; height: 540px;" alt="" src="./index_files/EuclideanTsp.png"></p>
+
+<h2>Experiments</h2>
+
+<ul>
+  <li>Start a Space</li>
+  <li>Start <i>c</i> Computers.</li>
+  <li>For each client:
+  	<ul>
+  		<li>Record the elapsed time for each task, as seen by the Computer.</li>
+  		<li>Record the elapsed time for the client's <i>job</i> (e.g., a Mandelbrot Set visualization)
+  			(i.e., after the Task return values have been composed into a Job solution).
+	    </li>
+  	</ul>
+</li></ul>
+
+<p>
+	Repeat the above steps for <i>c</i> = 1 and 2.
+	<!--For the case of <i>c = 1</i>, report job completion time for 3 deployment scenarios: -->
+</p>
+<!--
+<ul>
+    <li>client, Space, and computer are all instantiated in the same JVM</li>
+    <li>client, Space, and computer are instantiated on different JVMs running on the same machine</li>
+    <li>client, Space, and computer run on different machines.</li>
+</ul>
+-->
+For the case of <i>c = 2</i>, the <!--client, Space, and --> computers run on different machines.
+<p></p>
+<p>For each <i>problem type</i> (e.g., Mandelbrot visualization), plot the completion time (ordinate) for the <!--4 --> 2 experiments (abscissa).</p>
+
+
+<h2>Analysis</h2>
+<ol>
+    <li>
+    	<!--Explain the differences in <i>job</i> execution times: -->
+    	If the runtime when using 2 computers is not approximately 1/2 of that when using 1 computer, speculate as to why.
+    </li>
+    <li>To improve your understanding of what is going on, what other measurements would you like to see included?</li>
+    <!-- <li>Enumerate what you believe to be the key points concerning thread safety.</li> -->
+</ol>
+
+
+
+<h2>Deliverables</h2>
+<h3>Directories</h3>
+<ul>
+	
+  <li>
+  	<span style="font-weight: bold; color: rgb(0, 0, 153);">documents</span>- has an <span style="color: rgb(153, 0, 0);">index.html</span> file that contains links to:
+	</li>
+    <ul>
+      <!--
+      <li><span style="color: rgb(153, 0, 0);">readme.html</span>:
+provides any explanation needed to build your system, and and run each component.</li>
+      <li><span style="color: rgb(153, 0, 0);">javadoc</span>, a directory that contains the javadoc of your Task classes.</li>
+      
+      <ul>
+        <li><span style="color: rgb(153, 0, 0);">api interfaces</span></li>
+        <li><span style="color: rgb(153, 0, 0);">Task classes</span>: constructor parameters and execute method return values.</li>
+      </ul>
+      -->
+      <li><span style="color: rgb(153, 0, 0);">experimental results</span>: a spreadsheet or graph (as a pdf).</li>
+      <li><span style="color: rgb(153, 0, 0);">your analysis</span>, in either html or pdf.</li>
+      <!--<li><span style="color: rgb(153, 0, 0);">your paper summary</span>, in either html or pdf.</li>-->
+    </ul>
+   
+  <li><span style="font-weight: bold; color: rgb(0, 0, 153);">source</span> - a directory containing the following
+      subdirectories, reflecting the package structure:</li>
+  <ul>
+    <li><span style="color: rgb(153, 0, 0);">api</span>, which contains Task, Result, and Space (and Job and JobRunner, if you use them).</li>
+    <li>one or more other packages, containing the balance of your other interfaces and classes.</li>
+    <!--
+    <li><span style="color: rgb(153, 0, 0);">client</span>, which contains your client class[es]</li>
+    <li><span style="color: rgb(153, 0, 0);">system</span>, which contains your Computer,
+        ComputerImpl, and SpaceImpl classes.</li>
+    <li><span style="color: rgb(153, 0, 0);">applications</span>, which contains your Task and Result <i>classes</i> (and Job subclasses, if you use them) 
+        (each of the 2 applications may be in a subpackage, if you prefer)</li>
+        -->
+  </ul>
+  <li><span style="font-weight: bold; color: rgb(0, 0, 153);">library</span>
+      - has executables, typically jar files, that are not written by your team, but are needed to
+     run your project.</li>
+  <li><span style="font-weight: bold; color: rgb(0, 0, 153);">policy</span>
+      - has <span style="color: rgb(153, 0, 0);">policy</span> file[s].</li>
+</ul>
+
+<h3>Files</h3>
+
+<ul>
+  <li><span style="font-weight: bold; color: rgb(0, 0, 153);">
+      </span><span style="font-family: monospace; font-weight: bold; color: rgb(0, 0, 153);">build.xml</span>
+      file with targets to:
+  </li>
+  <ul>
+    <li><span style="color: rgb(153, 0, 0);">build</span>:
+        builds your system: Compiles and creates a .jar file that contains the classes.
+    </li>
+    <li><span style="color: rgb(153, 0, 0);">runSpace</span>: starts a Space.</li>
+    <li><span style="color: rgb(153, 0, 0);">runComputer</span>: starts a Computer .</li>
+    <li><span style="color: rgb(153, 0, 0);">runMandelbrotSetClient</span>: starts a Mandelbrot Set client .</li>
+    <li><span style="color: rgb(153, 0, 0);">runTspClient</span>: starts a TSP client .</li>
+  </ul>
+</ul>
+
+
+</div> <!-- end main -->
+
+<br>
+<hr size="1" noshade="noshade">
+
+<table style="background-color: rgb(254, 254, 254); width: 800px;">
+  <tbody>
+    <tr style="color: rgb(0, 0, 102);">
+        <td style="text-align: left;">
+          &nbsp;<a href="mailto:cappello@cs.ucsb.edu" class="nounderline"><small>cappello@cs.ucsb.edu
+        </small></a></td>
+        <td style="text-align: right;">
+          <small>© Copyright 2010 Peter Cappello</small>
+          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+        </td>
+        <td style="text-align: right;">
+          <small>2016.04.12</small>
+          &nbsp; <!-- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; -->
+        </td>
+        <!-- <td style="text-align: right;"><small>805.893.4383</small>&nbsp;</td> -->
+    </tr>
+  </tbody>
+</table>
+
+</div> <!-- end container-->
+
+
+
+</body></html>

@@ -1,0 +1,755 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0049)http://www.cs.ucsb.edu/~cappello/190B/homework/1/ -->
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="SHORTCUT ICON" href="http://www.cs.ucsb.edu/~cappello/images/favicon.ico">
+  <title>HW 1</title>
+  <link href="./index_files/site.css" rel="stylesheet" type="text/css">
+</head>
+
+<body><div id="StayFocusd-infobar" style="display: none; top: 1001px;">
+    <img src="chrome-extension://laankejkbhbdhmipfmgcngdelahlfoji/common/img/eye_19x19_red.png">
+    <span id="StayFocusd-infobar-msg"></span>
+    <span id="StayFocusd-infobar-links">
+        <a id="StayFocusd-infobar-never-show">hide forever</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+        <a id="StayFocusd-infobar-hide">hide once</a>
+    </span>
+</div>
+
+<div id="container">
+
+<div id="top">
+
+<table cellspacing="0" cellpadding="0">
+  <tbody>
+    <tr>
+      <td><a href="https://gauchospace.ucsb.edu/courses/course/view.php?id=11904">
+      	<img alt="" src="./index_files/GauchoMoodleLogo-small.png"></a>
+  	</td>
+    </tr>
+  </tbody>
+</table>
+
+</div> <!-- end top -->
+
+<div id="navbar">
+	
+<table>
+  <tbody>
+    <tr>
+    	<td><a href="http://www.cs.ucsb.edu/~cappello/190B/">
+    		<img src="./index_files/home.gif" alt="Home" border="0"></a>
+			</td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/grades.shtml">Grades</a></td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/homework/">Homework</a></td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/papers.shtml">Papers</a></td>
+      <!--<td><a href="http://www.cs.ucsb.edu/~cappello/190B/people.shtml">People</a></td>-->
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/projects/">Projects</a></td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/resources/">Resources</a></td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/syllabus.shtml">Syllabus</a></td>
+    </tr>
+  </tbody>
+</table>
+
+</div> <!-- end navbar -->
+
+<div id="main">
+
+	<p>
+		<img class="signature" alt="Give a man a program, frustrate him for a day. &lt;i&gt;Teach&lt;/i&gt; a man to program, frustrate him for a lifetime." src="./index_files/buddhabrotPRN.jpg" width="180px">
+	</p>
+
+
+<h1>Assignment 1: A compute server</h1>
+
+<!-- <p>In this assignment, you are to work in pairs.</p> -->
+
+<h2>Paper Summary</h2>
+
+<p>Submit a 1-page summary, using entirely your own words, of the paper titled, "A Note on Distributed Computing."</p>
+
+<h2>Purpose</h2>
+
+<p>The purpose of this programming assignment is to:</p>
+
+<ul>
+  <li>Give you experience working with Java RMI</li>
+  <li>Begin building a Java-centric cluster computing infrastructure.</li>
+</ul>
+
+<h2>Specification</h2>
+
+<p>Build a simple compute server:</p>
+
+<ul>
+  <li>Tasks are sent to it;</li> 
+  <li>It performs the computational task, and returns a result object.</li>
+</ul>
+
+<h3>The API</h3>
+
+<ul>
+  <li>Define a Task&lt;T&gt; interface with 1 method that takes no arguments and returns an object of type T.</li>
+  <li>Define a remote interface, Computer, with 1 method that has 1 argument, a Task object, 
+      and returns an object of type T, the Task method's return value type.
+  </li>
+</ul>
+
+<p>Define a ComputerImpl class that implements Computer.</p>
+
+<h3>Define <i>immutable</i> classes that implement Task</h3>
+
+<h4>MandelbrotSetTask</h4>
+
+<center>
+<img src="./index_files/mandelbrot_set.jpg" alt="Mandelbrot Set image" title="Mandelbrot Set image" width="400px">
+</center>
+  <ul>
+    <li>This task helps produce a visualization of the some part of the 
+        <a href="http://en.wikipedia.org/wiki/Mandelbrot_set">Mandelbrot set</a>.
+   </li>
+    <li>The constructor takes the following inputs:</li>  
+    <ul>
+      <li>2 doubles that represent the lower left corner of a square in the complex plane.</li>
+      <li>a double that represents the edge length of a square in the complex plane, whose sides 
+          are parallel to the axes.
+      </li>
+      <li>an int , <i>n</i>, such that the square region of the complex plane is subdivided into 
+          <i>n</i> X <i>n</i> squares, each of which is visualized by 1 pixel.
+      </li>           
+      <li>an int which is the <i>iteration limit</i>: It defines when the
+          representative point of a region is considered to be in the Mandelbrot set.
+      </li>       
+    </ul>
+    <li>The execute method returns an Integer[n][n] count array, where count[i][j] = <i>k</i>, 
+        where |<i>z<sub>k</sub></i>| &gt; 2 or <i>k</i> is the iteration limit (whichever is smaller), where
+    <ul>
+      <li><i>z<sub>0</sub> = c</i>, where <i>c</i> is the representative point in square[i][j] (typically the lower left point defining the square)</li>
+      <li><i>z<sub>k </sub>= (z<sub>k-1</sub>)<sup>2</sup> + c</i>.</li>      
+    </ul>
+    </li>
+    <li>
+    	Your client maps each element of the count array (i.e., elements in the set {0, 1, 2, ..., iterationLimit }) 
+    	to a Color object, and displays the <i>n</i> X <i>n</i> array of colors, 1 pixel per Color.
+	 </li>
+  </ul>
+
+    <p>Java graphics and GUI is not part of this course. Here is a snippet of client code that can be used to display the pixels:</p>
+<hr>
+
+
+
+<title>Client.java</title>
+
+<style type="text/css">
+<!--
+body {color: #000000; background-color: #ffffff; font-family: Monospaced}
+pre {color: #000000; background-color: #ffffff; font-family: Monospaced}
+table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
+.ST0 {color: #969696; font-family: Monospaced; font-weight: bold}
+.ST1 {font-family: Monospaced; font-weight: bold}
+.comment {color: #969696}
+.ST2 {color: #009900}
+.ST3 {color: #009900; font-family: Monospaced; font-style: italic}
+.ST4 {font-family: Monospaced; font-style: italic}
+.literal {color: #0000e6}
+.string {color: #ce7b00}
+-->
+</style>
+
+
+<table width="100%"><tbody><tr><td align="center">/Users/petercappello/NetBeansProjects/cs190bHw1/src/clients/Client.java</td></tr></tbody></table>
+<pre><span class="comment">/*</span>
+<span class="comment"> * The MIT License</span>
+<span class="comment"> *</span>
+<span class="comment"> * Copyright 2015 peter.</span>
+<span class="comment"> *</span>
+<span class="comment"> * Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="comment"> * of this software and associated documentation files (the "Software"), to deal</span>
+<span class="comment"> * in the Software without restriction, including without limitation the rights</span>
+<span class="comment"> * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="comment"> * copies of the Software, and to permit persons to whom the Software is</span>
+<span class="comment"> * furnished to do so, subject to the following conditions:</span>
+<span class="comment"> *</span>
+<span class="comment"> * The above copyright notice and this permission notice shall be included in</span>
+<span class="comment"> * all copies or substantial portions of the Software.</span>
+<span class="comment"> *</span>
+<span class="comment"> * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="comment"> * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="comment"> * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="comment"> * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="comment"> * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="comment"> * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN</span>
+<span class="comment"> * THE SOFTWARE.</span>
+<span class="comment"> */</span>
+<span class="literal">package</span> clients;
+<span class="literal">import</span> api.Computer;
+<span class="literal">import</span> api.Task;
+<span class="literal">import</span> computer.ComputerImpl;
+<span class="literal">import</span> java.awt.BorderLayout;
+<span class="literal">import</span> java.awt.Container;
+<span class="literal">import</span> java.net.MalformedURLException;
+<span class="literal">import</span> java.rmi.Naming;
+<span class="literal">import</span> java.rmi.NotBoundException;
+<span class="literal">import</span> java.rmi.RemoteException;
+<span class="literal">import</span> java.util.logging.Level;
+<span class="literal">import</span> java.util.logging.Logger;
+<span class="literal">import</span> javax.swing.JFrame;
+<span class="literal">import</span> javax.swing.JLabel;
+<span class="literal">import</span> javax.swing.JScrollPane;
+
+<span class="comment">/**</span>
+<span class="comment"> *</span>
+<span class="comment"> * </span><span class="ST0">@author</span> <span class="comment">Peter</span> <span class="comment">Cappello</span>
+<span class="comment"> * </span><span class="ST0">@param</span> &lt;T&gt; <span class="comment">return</span> <span class="comment">type</span> <span class="comment">the</span> <span class="comment">Task</span> <span class="comment">that</span> <span class="comment">this</span> <span class="comment">Client</span> <span class="comment">executes</span><span class="comment">.</span>
+ <span class="comment">*/</span>
+<span class="literal">public</span> <span class="literal">class</span> <span class="ST1">Client</span>&lt;T&gt; <span class="literal">extends</span> JFrame
+{
+    <span class="literal">final</span> <span class="literal">protected</span> Task&lt;T&gt; <span class="ST2">task</span>;
+    <span class="literal">final</span> <span class="literal">private</span> Computer <span class="ST2">computer</span>;
+    
+    <span class="literal">public</span> <span class="ST1">Client</span>( <span class="literal">final</span> String domainName, <span class="literal">final</span> Task&lt;T&gt; task ) 
+            <span class="literal">throws</span> RemoteException, NotBoundException, MalformedURLException
+    {     
+        <span class="literal">this</span>.<span class="ST2">task</span> = task;        
+        String url = <span class="string">"</span><span class="string">rmi://</span><span class="string">"</span> + domainName + <span class="string">"</span><span class="string">:</span><span class="string">"</span> + Computer.<span class="ST3">PORT</span> + <span class="string">"</span><span class="string">/</span><span class="string">"</span> + Computer.<span class="ST3">SERVICE_NAME</span>;
+        <span class="ST2">computer</span> = domainName == <span class="literal">null</span> || domainName.isEmpty() 
+                        ? <span class="literal">new</span> ComputerImpl() : (Computer) Naming.<span class="ST4">lookup</span>( url );
+    }
+    
+    <span class="literal">void</span> <span class="ST1">init</span>( <span class="literal">final</span> String title )
+    {
+        <span class="literal">this</span>.setTitle( title );
+        setDefaultCloseOperation( JFrame.<span class="ST3">EXIT_ON_CLOSE</span> );
+    }
+    
+    <span class="literal">public</span> <span class="literal">void</span> <span class="ST1">add</span>( <span class="literal">final</span> JLabel jLabel )
+    {
+        <span class="literal">final</span> Container container = getContentPane();
+        container.setLayout( <span class="literal">new</span> BorderLayout() );
+        container.add( <span class="literal">new</span> JScrollPane( jLabel ), BorderLayout.<span class="ST3">CENTER</span> );
+        pack();
+        setVisible( <span class="literal">true</span> );
+    }
+    
+    <span class="literal">public</span> T <span class="ST1">runTask</span>() <span class="literal">throws</span> RemoteException
+    {
+        <span class="literal">final</span> <span class="literal">long</span> taskStartTime = System.<span class="ST4">nanoTime</span>();
+        <span class="literal">final</span> T value = <span class="ST2">computer</span>.execute( <span class="ST2">task</span> );
+        <span class="literal">final</span> <span class="literal">long</span> taskRunTime = ( System.<span class="ST4">nanoTime</span>() - taskStartTime ) / 1000000;
+        Logger.<span class="ST4">getLogger</span>( Client.<span class="literal">class</span>.getCanonicalName() )
+                  .log( Level.<span class="ST3">INFO</span>, <span class="string">"</span><span class="string">Task {0}Task time: {1} ms.</span><span class="string">"</span>, <span class="literal">new</span> Object[]{ <span class="ST2">task</span>, taskRunTime } );
+        <span class="literal">return</span> value;
+    }
+}
+
+</pre>
+
+
+<hr>
+
+
+
+<title>ClientMandelbrotSet.java</title>
+
+<style type="text/css">
+<!--
+body {color: #000000; background-color: #ffffff; font-family: Monospaced}
+pre {color: #000000; background-color: #ffffff; font-family: Monospaced}
+table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
+.ST0 {color: #969696; font-family: Monospaced; font-weight: bold}
+.ST1 {font-family: Monospaced; font-weight: bold}
+.comment {color: #969696}
+.ST5 {color: #009900}
+.ST3 {font-family: Monospaced; font-weight: bold; font-style: italic}
+.ST2 {color: #009900; font-family: Monospaced; font-style: italic}
+.ST4 {font-family: Monospaced; font-style: italic}
+.literal {color: #0000e6}
+.string {color: #ce7b00}
+-->
+</style>
+
+
+<table width="100%"><tbody><tr><td align="center">/Users/petercappello/NetBeansProjects/cs190bHw1/src/clients/ClientMandelbrotSet.java</td></tr></tbody></table>
+<pre><span class="comment">/*</span>
+<span class="comment"> * The MIT License</span>
+<span class="comment"> *</span>
+<span class="comment"> * Copyright 2015 peter.</span>
+<span class="comment"> *</span>
+<span class="comment"> * Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="comment"> * of this software and associated documentation files (the "Software"), to deal</span>
+<span class="comment"> * in the Software without restriction, including without limitation the rights</span>
+<span class="comment"> * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="comment"> * copies of the Software, and to permit persons to whom the Software is</span>
+<span class="comment"> * furnished to do so, subject to the following conditions:</span>
+<span class="comment"> *</span>
+<span class="comment"> * The above copyright notice and this permission notice shall be included in</span>
+<span class="comment"> * all copies or substantial portions of the Software.</span>
+<span class="comment"> *</span>
+<span class="comment"> * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="comment"> * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="comment"> * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="comment"> * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="comment"> * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="comment"> * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN</span>
+<span class="comment"> * THE SOFTWARE.</span>
+<span class="comment"> */</span>
+<span class="literal">package</span> clients;
+<span class="literal">import</span> java.awt.Color;
+<span class="literal">import</span> java.awt.Graphics;
+<span class="literal">import</span> java.awt.Image;
+<span class="literal">import</span> java.awt.image.BufferedImage;
+<span class="literal">import</span> java.net.MalformedURLException;
+<span class="literal">import</span> java.rmi.NotBoundException;
+<span class="literal">import</span> java.rmi.RemoteException;
+<span class="literal">import</span> javax.swing.ImageIcon;
+<span class="literal">import</span> javax.swing.JLabel;
+<span class="literal">import</span> tasks.TaskMandelbrotSet;
+
+<span class="comment">/**</span>
+<span class="comment"> *</span>
+<span class="comment"> * </span><span class="ST0">@author</span> <span class="comment">Peter</span> <span class="comment">Cappello</span>
+ <span class="comment">*/</span>
+<span class="literal">public</span> <span class="literal">class</span> <span class="ST1">ClientMandelbrotSet</span> <span class="literal">extends</span> Client&lt;Integer[][]&gt;
+{
+    <span class="literal">private</span> <span class="literal">static</span> <span class="literal">final</span> <span class="literal">double</span> <span class="ST2">LOWER_LEFT_X</span> = -2.0;
+    <span class="literal">private</span> <span class="literal">static</span> <span class="literal">final</span> <span class="literal">double</span> <span class="ST2">LOWER_LEFT_Y</span> = -2.0;
+    <span class="literal">private</span> <span class="literal">static</span> <span class="literal">final</span> <span class="literal">double</span> <span class="ST2">EDGE_LENGTH</span> = 4.0;
+    <span class="literal">private</span> <span class="literal">static</span> <span class="literal">final</span> <span class="literal">int</span> <span class="ST2">N_PIXELS</span> = 512;
+    <span class="literal">private</span> <span class="literal">static</span> <span class="literal">final</span> <span class="literal">int</span> <span class="ST2">ITERATION_LIMIT</span> = 64;
+    
+    <span class="literal">public</span> <span class="ST1">ClientMandelbrotSet</span>() <span class="literal">throws</span> RemoteException, NotBoundException, MalformedURLException 
+    { 
+        <span class="literal">super</span>( <span class="string">""</span> <span class="comment">/* "localhost" */</span>,
+                   <span class="literal">new</span> TaskMandelbrotSet( <span class="ST2">LOWER_LEFT_X</span>, <span class="ST2">LOWER_LEFT_Y</span>, <span class="ST2">EDGE_LENGTH</span>, <span class="ST2">N_PIXELS</span>,
+                                                           <span class="ST2">ITERATION_LIMIT</span>) ); 
+    }
+    
+    <span class="comment">/**</span>
+<span class="comment">     * </span><span class="ST0">Run</span> <span class="ST0">the</span> <span class="ST0">MandelbrotSet</span> <span class="ST0">visualizer</span> <span class="ST0">client</span><span class="ST0">.</span>
+<span class="comment">     * </span><span class="ST0">@param</span> args <span class="comment">unused</span> 
+<span class="comment">     * </span><span class="ST0">@throws</span> <span class="comment">java</span><span class="comment">.</span><span class="comment">rmi</span><span class="comment">.</span><span class="comment">RemoteException</span> 
+     <span class="comment">*/</span>
+    <span class="literal">public</span> <span class="literal">static</span> <span class="literal">void</span> <span class="ST3">main</span>( String[] args ) <span class="literal">throws</span> Exception
+    {  
+        System.<span class="ST4">setSecurityManager</span>( <span class="literal">new</span> SecurityManager() );
+        <span class="literal">final</span> ClientMandelbrotSet client = <span class="literal">new</span> ClientMandelbrotSet();
+        client.init( <span class="string">"</span><span class="string">Mandelbrot Set Visualizer</span><span class="string">"</span> );
+        Integer[][] value = client.runTask();
+        client.add( client.getLabel( value ) );
+    }
+    
+    <span class="literal">public</span> JLabel <span class="ST1">getLabel</span>( Integer[][] counts )
+    {
+        <span class="literal">final</span> Image image = <span class="literal">new</span> BufferedImage( <span class="ST2">N_PIXELS</span>, <span class="ST2">N_PIXELS</span>, BufferedImage.<span class="ST2">TYPE_INT_ARGB</span> );
+        <span class="literal">final</span> Graphics graphics = image.getGraphics();
+        <span class="literal">for</span> ( <span class="literal">int</span> i = 0; i &lt; counts.<span class="ST5">length</span>; i++ )
+            <span class="literal">for</span> ( <span class="literal">int</span> j = 0; j &lt; counts.<span class="ST5">length</span>; j++ )
+            {
+                graphics.setColor( getColor( counts[i][j] ) );
+                graphics.fillRect( i, <span class="ST2">N_PIXELS</span> - j, 1, 1 );
+            }
+        <span class="literal">return</span> <span class="literal">new</span> JLabel( <span class="literal">new</span> ImageIcon( image ) );
+    }
+    
+    <span class="literal">private</span> Color <span class="ST1">getColor</span>( <span class="literal">int</span> iterationCount )
+    {
+        <span class="literal">return</span> iterationCount == <span class="ST2">ITERATION_LIMIT</span> ? Color.<span class="ST2">BLACK</span> : Color.<span class="ST2">WHITE</span>;
+    }
+}
+
+</pre>
+
+
+
+<hr>
+ 
+
+
+<h4>EuclideanTspTask</h4>  
+    
+<ul>
+    <li>
+    	This task solves a <a href="http://en.wikipedia.org/wiki/Travelling_salesman_problem">Traveling
+			Salesman Problem</a> (TSP), where the cities are points in the 2D Euclidean plane.
+		</li>  
+    <li>
+    	The constructor takes a double[][] cities that codes the x and y coordinates of city[i]: 
+    	cities[i][0] is the x-coordinate of city[i] and cities[i][1] is the y-coordinate of city[i].
+    </li>
+    <li>The distance between cities is the Euclidean distance.</li>
+    <li>
+    	The execute method returns an int[] tour that lists the order of the cities of a minimal distance tour. 
+    	Its method of finding this tour does not have to be clever: 
+    	For example, your program can iterate over all permutations of the cities, and return a permutation of least cost (which is not unique).
+    </li> 
+</ul>
+
+    <p>Java graphics and GUI is not part of this course. Here is a snippet of Euclidean TSP client code that can be used to display the tour, extending the Client class above:</p>
+
+
+<hr>
+
+
+
+<title>ClientEuclideanTsp.java</title>
+
+<style type="text/css">
+<!--
+body {color: #000000; background-color: #ffffff; font-family: Monospaced}
+pre {color: #000000; background-color: #ffffff; font-family: Monospaced}
+table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
+.ST0 {color: #969696; font-family: Monospaced; font-weight: bold}
+.ST1 {font-family: Monospaced; font-weight: bold}
+.comment {color: #969696}
+.ST5 {color: #009900}
+.ST3 {font-family: Monospaced; font-weight: bold; font-style: italic}
+.ST2 {color: #009900; font-family: Monospaced; font-style: italic}
+.ST4 {font-family: Monospaced; font-style: italic}
+.literal {color: #0000e6}
+.string {color: #ce7b00}
+-->
+</style>
+
+
+<table width="100%"><tbody><tr><td align="center">/Users/petercappello/NetBeansProjects/cs190bHw1/src/clients/ClientEuclideanTsp.java</td></tr></tbody></table>
+<pre><span class="comment">/*</span>
+<span class="comment"> * The MIT License</span>
+<span class="comment"> *</span>
+<span class="comment"> * Copyright 2015 peter.</span>
+<span class="comment"> *</span>
+<span class="comment"> * Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="comment"> * of this software and associated documentation files (the "Software"), to deal</span>
+<span class="comment"> * in the Software without restriction, including without limitation the rights</span>
+<span class="comment"> * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="comment"> * copies of the Software, and to permit persons to whom the Software is</span>
+<span class="comment"> * furnished to do so, subject to the following conditions:</span>
+<span class="comment"> *</span>
+<span class="comment"> * The above copyright notice and this permission notice shall be included in</span>
+<span class="comment"> * all copies or substantial portions of the Software.</span>
+<span class="comment"> *</span>
+<span class="comment"> * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="comment"> * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="comment"> * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="comment"> * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="comment"> * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="comment"> * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN</span>
+<span class="comment"> * THE SOFTWARE.</span>
+<span class="comment"> */</span>
+<span class="literal">package</span> clients;
+<span class="literal">import</span> java.awt.Color;
+<span class="literal">import</span> java.awt.Graphics;
+<span class="literal">import</span> java.awt.Image;
+<span class="literal">import</span> java.awt.image.BufferedImage;
+<span class="literal">import</span> java.net.MalformedURLException;
+<span class="literal">import</span> java.rmi.NotBoundException;
+<span class="literal">import</span> java.rmi.RemoteException;
+<span class="literal">import</span> java.util.List;
+<span class="literal">import</span> java.util.logging.Level;
+<span class="literal">import</span> java.util.logging.Logger;
+<span class="literal">import</span> javax.swing.ImageIcon;
+<span class="literal">import</span> javax.swing.JLabel;
+<span class="literal">import</span> tasks.TaskEuclideanTsp;
+
+<span class="comment">/**</span>
+<span class="comment"> *</span>
+<span class="comment"> * </span><span class="ST0">@author</span> <span class="comment">Peter</span> <span class="comment">Cappello</span>
+ <span class="comment">*/</span>
+<span class="literal">public</span> <span class="literal">class</span> <span class="ST1">ClientEuclideanTsp</span> <span class="literal">extends</span> Client&lt;List&lt;Integer&gt;&gt;
+{
+    <span class="literal">private</span> <span class="literal">static</span> <span class="literal">final</span> <span class="literal">int</span> <span class="ST2">NUM_PIXALS</span> = 600;
+    <span class="literal">private</span> <span class="literal">static</span> <span class="literal">final</span> <span class="literal">double</span>[][] <span class="ST2">CITIES</span> = 
+    {
+        { 6, 3 },
+        { 2, 2 },
+        { 5, 8 },
+        { 1, 5 },
+        { 1, 6 },
+        { 2, 7 },
+        { 2, 8 },
+        { 6, 5 },
+        { 1, 3 },
+        { 6, 6 }
+    };
+    
+    <span class="literal">public</span> <span class="ST1">ClientEuclideanTsp</span>() <span class="literal">throws</span> RemoteException, NotBoundException, MalformedURLException
+    { 
+        <span class="literal">super</span>( <span class="string">""</span>, <span class="literal">new</span> TaskEuclideanTsp( <span class="ST2">CITIES</span> ) );
+    }
+    
+    <span class="literal">public</span> <span class="literal">static</span> <span class="literal">void</span> <span class="ST3">main</span>( String[] args ) <span class="literal">throws</span> Exception
+    {
+        System.<span class="ST4">setSecurityManager</span>( <span class="literal">new</span> SecurityManager() );
+        <span class="literal">final</span> ClientEuclideanTsp client = <span class="literal">new</span> ClientEuclideanTsp();
+        client.init( <span class="string">"</span><span class="string">Euclidean TSP</span><span class="string">"</span> );
+        <span class="literal">final</span> List&lt;Integer&gt; value = client.runTask();
+        client.add( client.getLabel( value.toArray( <span class="literal">new</span> Integer[0] ) ) );
+    }
+    
+    <span class="literal">public</span> JLabel <span class="ST1">getLabel</span>( <span class="literal">final</span> Integer[] tour )
+    {
+        Logger.<span class="ST4">getLogger</span>( ClientEuclideanTsp.<span class="literal">class</span>.getCanonicalName() ).log(Level.<span class="ST2">INFO</span>, tourToString( tour ) );
+
+        <span class="comment">// display the graph graphically, as it were</span>
+        <span class="comment">// get minX, maxX, minY, maxY, assuming they 0.0 &lt;= mins</span>
+        <span class="literal">double</span> minX = <span class="ST2">CITIES</span>[0][0], maxX = <span class="ST2">CITIES</span>[0][0];
+        <span class="literal">double</span> minY = <span class="ST2">CITIES</span>[0][1], maxY = <span class="ST2">CITIES</span>[0][1];
+        <span class="literal">for</span> ( <span class="literal">double</span>[] cities : <span class="ST2">CITIES</span> ) 
+        {
+            <span class="literal">if</span> ( cities[0] &lt; minX ) 
+                minX = cities[0];
+            <span class="literal">if</span> ( cities[0] &gt; maxX ) 
+                maxX = cities[0];
+            <span class="literal">if</span> ( cities[1] &lt; minY ) 
+                minY = cities[1];
+            <span class="literal">if</span> ( cities[1] &gt; maxY ) 
+                maxY = cities[1];
+        }
+
+        <span class="comment">// scale points to fit in unit square</span>
+        <span class="literal">final</span> <span class="literal">double</span> side = Math.<span class="ST4">max</span>( maxX - minX, maxY - minY );
+        <span class="literal">double</span>[][] scaledCities = <span class="literal">new</span> <span class="literal">double</span>[<span class="ST2">CITIES</span>.<span class="ST5">length</span>][2];
+        <span class="literal">for</span> ( <span class="literal">int</span> i = 0; i &lt; <span class="ST2">CITIES</span>.<span class="ST5">length</span>; i++ )
+        {
+            scaledCities[i][0] = ( <span class="ST2">CITIES</span>[i][0] - minX ) / side;
+            scaledCities[i][1] = ( <span class="ST2">CITIES</span>[i][1] - minY ) / side;
+        }
+
+        <span class="literal">final</span> Image image = <span class="literal">new</span> BufferedImage( <span class="ST2">NUM_PIXALS</span>, <span class="ST2">NUM_PIXALS</span>, BufferedImage.<span class="ST2">TYPE_INT_ARGB</span> );
+        <span class="literal">final</span> Graphics graphics = image.getGraphics();
+
+        <span class="literal">final</span> <span class="literal">int</span> margin = 10;
+        <span class="literal">final</span> <span class="literal">int</span> field = <span class="ST2">NUM_PIXALS</span> - 2*margin;
+        <span class="comment">// draw edges</span>
+        graphics.setColor( Color.<span class="ST2">BLUE</span> );
+        <span class="literal">int</span> x1, y1, x2, y2;
+        <span class="literal">int</span> city1 = tour[0], city2;
+        x1 = margin + (<span class="literal">int</span>) ( scaledCities[city1][0]*field );
+        y1 = margin + (<span class="literal">int</span>) ( scaledCities[city1][1]*field );
+        <span class="literal">for</span> ( <span class="literal">int</span> i = 1; i &lt; <span class="ST2">CITIES</span>.<span class="ST5">length</span>; i++ )
+        {
+            city2 = tour[i];
+            x2 = margin + (<span class="literal">int</span>) ( scaledCities[city2][0]*field );
+            y2 = margin + (<span class="literal">int</span>) ( scaledCities[city2][1]*field );
+            graphics.drawLine( x1, y1, x2, y2 );
+            x1 = x2;
+            y1 = y2;
+        }
+        city2 = tour[0];
+        x2 = margin + (<span class="literal">int</span>) ( scaledCities[city2][0]*field );
+        y2 = margin + (<span class="literal">int</span>) ( scaledCities[city2][1]*field );
+        graphics.drawLine( x1, y1, x2, y2 );
+
+        <span class="comment">// draw vertices</span>
+        <span class="literal">final</span> <span class="literal">int</span> VERTEX_DIAMETER = 6;
+        graphics.setColor( Color.<span class="ST2">RED</span> );
+        <span class="literal">for</span> ( <span class="literal">int</span> i = 0; i &lt; <span class="ST2">CITIES</span>.<span class="ST5">length</span>; i++ )
+        {
+            <span class="literal">int</span> x = margin + (<span class="literal">int</span>) ( scaledCities[i][0]*field );
+            <span class="literal">int</span> y = margin + (<span class="literal">int</span>) ( scaledCities[i][1]*field );
+            graphics.fillOval( x - VERTEX_DIAMETER/2,
+                               y - VERTEX_DIAMETER/2,
+                              VERTEX_DIAMETER, VERTEX_DIAMETER);
+        }
+        <span class="literal">return</span> <span class="literal">new</span> JLabel( <span class="literal">new</span> ImageIcon( image ) );
+    }
+    
+    <span class="literal">private</span> String <span class="ST1">tourToString</span>( Integer[] cities )
+    {
+        StringBuilder stringBuilder = <span class="literal">new</span> StringBuilder();
+        stringBuilder.append( <span class="string">"</span><span class="string">Tour: </span><span class="string">"</span> );
+        <span class="literal">for</span> ( Integer city : cities )
+        {
+            stringBuilder.append( city ).append( <span class="string">'</span> <span class="string">'</span> );
+        }
+        <span class="literal">return</span> stringBuilder.toString();
+    }
+}
+
+</pre>
+
+
+
+
+<hr>
+
+<h3>Exercise each task class</h3>
+
+<p>Define a client that:</p>
+
+<ul>
+  <li>gets the domain name or IP address of a machine that is running a Computer. (It is either hard-coded in the client, obtained from the command line, or read from a file.)</li>
+  <li>obtains a remote reference to a Computer;</li>
+  <li>constructs an instance of its Task class, as specified above;</li>
+  <li>for that instance:</li>
+  <ul>
+    <li>invokes the Computer's remote execute method, passing the Task object as an argument;</li>
+    <ul>
+      <li>For the MandelbrotSetTask use the parameter values:</li>      
+      <ul>
+        <li>-2.0, -2.0</li>
+        <li>4.0</li>
+        <li>512</li>
+        <li>64</li>           
+      </ul>
+      
+      <li>
+      	For the EuclideanTspTask, use the following list of cities as a problem instance:
+				Each line that follows has the <i>x</i> and <i>y</i> coordinates of a city, starting with city 0 and ending with city 9:<br> <br>
+
+6 3<br>
+
+2 2<br>
+
+5 8<br>
+
+1 5<br>
+
+1 6<br>
+
+2 7<br>
+
+2 8<br>
+
+6 5<br>
+
+1 3<br>
+
+6 6<br>
+        <br>
+If you plot these cities, a minimal tour is obvious: 0, 1, 8, 3, 4, 5, 6, 2, 9, 7.
+</li>
+    </ul>  
+
+    <li>
+    	suitably display the arguments and return value.
+    	<ul>
+    		<li><img src="./index_files/TSP.png" alt="Travelling Salesman Tour" title="Travelling Salesman Tour" width="400px"></li>
+    		<li><img src="./index_files/MandelbrotSet.png" alt="Travelling Salesman Tour" title="Travelling Salesman Tour" width="400px"></li>
+    	</ul>
+    	
+    	</li>
+  </ul>
+</ul>
+
+<h3>Experiment</h3>
+
+<ul>
+  <li>Start a Computer.</li>
+  <li>Start a Mandelbrot set visualization client.</li>
+    <li>Start a Euclidean TSP client.</li>
+</ul>
+
+<h3>Extra credit feature (2 points)</h3>
+<p>
+When you deploy ComputerImpl in a separte JVM from the client,
+make sure that the ComputerImpl does not have the client's Task classes in its class path:
+The client provides a codebase.
+</p>
+
+<p>
+This ensures that
+the ComputerImpl works with tasks whose Task class has been implemented after the ComputerImpl was
+deployed, without having to restart the ComputerImpl.
+This is not the same as the ComputerImpl reloading classes which have changed, which is not a goal.
+</p>
+
+<h2>Deliverable</h2>
+
+<p>
+Mail to yourself and to &lt;<a href="mailto:mailto:cappello@cs.ucsb.edu">cappello@cs.ucsb.edu</a>&gt;
+a jar file, named &lt;name&gt;.jar or a zip file, named &lt;name&gt;.zip where &lt;name&gt; is the CS computer account username
+of 1 member of the pair. 
+When mailing this attachment to me, cc yourself.
+We will download and open your jar/zip file during the weekly meeting.
+The jar/zip file includes the following directories &amp; files:
+</p>
+
+<h3>Directories</h3>
+
+<ul>
+  <li><b>documents:</b> has index.html file that contains links to:</li>           
+      <ul>
+        <li>readme.html: Instructions to compile and run your client and compute server.</li>     
+        <!-- 
+        <li>javadoc: a directory that explains how to use your           
+        <ul>
+          <li>api</li>
+          <li>Task classes: constructor parameters and execute method return values.</li>           
+        </ul>
+        Your comments should be clear, concise, and sufficient to allow someone to use these classes and interfaces without having to look at your code.
+        </li>
+        -->
+        <li>
+        	Experimental results: For each task type, present the execution method's elapsed time, as seen by the <i>client</i>.
+        	<!--Offer an explanation for your results, to the extent that one is needed. -->
+        </li>
+        <li>Your paper summary. </li>            
+      </ul>    
+  <li><b>source:</b> directory (it does not need to be named "source") containing the following subdirectories, reflecting the package structure:</li>
+  <ul>
+    <li>tasks, which contains your Task classes (each Task subtype may be in a
+       subpackage, if you prefer)
+     </li>
+    <li>client, which contains your client class[es]</li>
+    <li>system, which contains your implementation of the Computer interface.</li>
+    <li>api, which contains your Task and Computer interfaces.</li>  
+  </ul>
+  <li>
+  	<b>library:</b> has any executables, typically jar files, that are not written by your team, 
+    but are needed to compile your work.
+  </li>
+</ul>
+
+<h3>Files</h3>
+
+<ul>
+	<li>policy file</li>
+	<li>build.xml file with targets to:
+	<ul>
+		<li>build: builds your system. Creates a computer.jar and client.jar.</li>
+    <li>runComputer: starts a Computer whose classpath does not include the client's Task classes.</li>
+    <li>runClientMandelbrot: starts a Mandelbrot client.</li>
+    <li>runClientTsp: starts a TSP client.</li>    
+  </ul>
+  </li>
+</ul>
+
+<p>
+	Here is a <a href="http://www.cs.ucsb.edu/~cappello/190B/homework/1/build.xml">sample build.xml file</a> which you will need to alter. 
+	(To get aesthetically pleasing line spacing, use "Save link as" to get this file.)
+</p>
+
+<p>
+ANT: CSIL machines have it installed. 
+If you <i>install</i> Ant on your own machine, then, before invoking it from the command line, set the environment variable ANT_HOME to the directory in which it is installed.</p>
+
+
+</div> <!-- end main -->
+
+<br>
+<hr size="1" noshade="noshade">
+
+<table style="background-color: rgb(254, 254, 254); width: 800px;">
+  <tbody>
+    <tr style="color: rgb(0, 0, 102);">
+        <td style="text-align: left;">
+          &nbsp;<a href="mailto:cappello@cs.ucsb.edu" class="nounderline"><small>cappello@cs.ucsb.edu
+        </small></a></td>
+        <td style="text-align: right;">
+          <small>© Copyright 2010 Peter Cappello</small>
+          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+        </td>
+        <td style="text-align: right;">
+          <small>2016.04.12</small>
+          &nbsp; <!-- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; -->
+        </td>
+        <!-- <td style="text-align: right;"><small>805.893.4383</small>&nbsp;</td> -->
+    </tr>
+  </tbody>
+</table>
+
+</div> <!-- end container-->
+
+
+
+</body></html>

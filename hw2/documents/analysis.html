@@ -1,0 +1,27 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+</head>
+<body>
+<h1>HW2 analysis</h1>
+<h2>Mandelbrot Set</h2>
+<p> For one computer, we can observe that every single task has a very different runtime. The runtime of single task varies from 16 ms to 208 ms. The reason is that although we divide the whole job into 16 equal size tasks, each task in face is not equal. Some tasks has lots of black points, which means that they have to do calculation until iteration limit, while some tasks has lots of white points, which make those tasks quicker than other tasks.</p>
+<p> For two computer, the runtime of single task varies from 10 ms to 202 ms, which is very similar to the situation of one computer. 
+However, since in two-computer situation, two workers will take a new task once they finish their current task, which means even though each task is not equal, this mechanism will make two workers have a similar total working time. For example, suppose computer A is unlucky and get a 202ms task, computer B may resolve lots of small tasks during the 202 ms. Even though their task number is different, but the total working time is quite equal. That is why the runtime will be about half of the one-computer situation.
+</p>
+<h2>Travelling Salesman Problem</h2>
+<p>Although with two computers the average task runtime was smaller than with one computer,
+the total runtime for the client was greater than 1/2 of the client runtime for one computer.
+	We speculate that this difference is due to the process of marshalling/unmarshalling the objects,
+a process that doesnt happen when we are using a single computer.</p>
+<p>At first we would expect that if we had a dedicated machine to do aproximadetely half of the tasks instead of a single one doing all the job, the average runtime would be less or equal to 1/2 of the total runtime in one machine however it doesnt happen.</p>
+<p>	Although with two computers in fact, the average task runtime was smaller than with a single computer, the total runtime for the client was greater than 1/2 of the client runtime for one computer.</p>
+<p>	There is no differences in the code itself, there are still de same ammount of tasks but it takes longer than 1/2.</p>
+<p>	In order to understand whats going on there, we speculate two possibilities: The first one was the order and which tasks were taken. The case were a single computer still running while the other ones are already done delaying the whole process. The second thing that might influenciate on this difference is the process of marshalling/unmarshalling the objects to send them through the network. There is another possibility that was due to delay from the network but in a local network it wouldnt create such a difference.</p>
+<h2>What Information Can We Include to Understand what is going on?</h2>
+<p> In order to understand what is going on, I would include a measure for the quantity of memory used in the tasks executions. I don’t think that it would be necessary to add a measure to quantify the amount of network used when transferring data between the entities in this project but I think that this is probably necessary in bigger projects. </p>
+<p> Indicating which computer do which tasks may be also helpful. By doing so, we can observe if both computers work equally, as we assumed.</p>
+
+</body>
+</html> 

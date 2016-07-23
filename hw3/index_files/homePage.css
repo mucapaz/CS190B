@@ -1,0 +1,178 @@
+<style type="text/css">
+
+<!--
+
+*{
+	margin:  0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+}
+
+body 
+{
+	background-color: #FFFFFF;
+	font-family: arial, helvetica, tahoma, sans-serif;
+	font-size: 0.9em;
+	color: #303030; /* grey background fade */
+	background-repeat: repeat-x;
+	background-image: url(images/background.jpg);
+	/*background-attachment: fixed;*/
+	text-align: justify;
+    direction: ltr;
+}
+
+pre,code { color: #0000A0; }
+	
+#container 
+{
+	width: 800px;
+	margin: 0px auto 0px auto;  /* Top, Right, Bottom, Left */
+	border: 1px solid #000000;
+	background-color: #FFFFFF;
+	color: inherit;
+}
+
+#container a:link, #container a:visited
+{
+	color: #000080;
+	font-weight:normal;
+	text-decoration: none;
+}
+
+#container a:hover { color: #008000; }
+
+#top table 
+{ 
+	width: 100%;
+	height: 120px;
+	background-image: url(images/head.jpg);
+	color: rgb(0, 0, 127);
+}
+
+#navbar
+{
+	border-top:    1px solid #000000;
+	border-bottom: 1px solid #000000;
+}
+
+#navbar table 
+{
+	background-color: #E0E0FF; /*  rgb(204, 204, 255); */
+	width: 100%; 
+	height: 30px;
+	text-align: center;
+}
+
+/****** Main Page ******/	
+#main 
+{
+	display: block;
+	margin:  0px auto 0px auto; /* Top, Right, Bottom, Left */
+	padding: 20px 0.5in 20px 0.5in; 	
+	text-align: inherit;
+	line-height: 125%;
+}
+
+#main h1, #main h2, #main h3 { color: rgb(0, 0, 127); }
+
+#main h2, #main h3, #main h4 { font-weight: normal; }
+
+#main h1 	
+{	
+			font-size: 150%;
+			font-weight: lighter;
+			text-align: center;
+			text-transform: uppercase;
+}
+
+#main h2 { font-size: 130%; }
+
+#main h3 { font-size: 120%; }
+#main h4 { color: #C00000; }
+
+#main h1, h2, ul { line-height: 140% }
+
+#main img
+{
+	float: left;
+	border: 1px solid #000000;
+	margin: 0 10px 5px 10px;
+	padding: 2px;
+	background-color: #FFF;
+}
+
+/*
+#main ul
+{
+	list-style-type:none;
+	padding:10px;
+	margin:0px;
+	list-style-image:url('images/bullet.gif');
+}
+
+#main li
+{
+	background-repeat:no-repeat;
+	background-position:0px 2px;
+	padding-left:14px;
+}
+*/
+
+/* for a quoted paragraph - currenlty unused */
+#main p.red 
+{
+	padding: 0px 15px 0px 15px;
+	color: rgb(127, 0, 0);
+	font-style: italics;
+}
+
+#math
+{
+	padding: 0px 15px 0px 15px;
+	font-style: italics;
+	text-align: center;
+}
+
+#main img.signature
+{	
+	float: right;
+	border: 1px solid #000000;
+	margin: 10px 10px 5px 10px;
+	padding: 5px;
+	background-color: #FFF;
+	
+	position: relative;
+	right: -0px;
+	bottom: -0px;
+} 
+
+#main table.center
+{ 
+	margin-left: auto; 
+	margin-right: auto;
+}
+
+#main th.grade
+{ 
+	text-align: left; 
+}
+
+#foot
+{
+	width: 100%;
+	border-top: 1px solid #000000;
+	text-align: center;
+	padding: 1px 0px 1px 0px;  /* Top, Right, Bottom, Left */
+	font-size: 90%;
+	color: rgb(0, 0, 127);
+	clear:both; /* to insure that signature image is above footer */
+}
+
+#foot table
+{ 
+	width: 100%;
+	color: rgb(0, 0, 102); 
+}
+
+-->
+
+</style>

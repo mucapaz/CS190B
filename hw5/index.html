@@ -1,0 +1,534 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0049)http://www.cs.ucsb.edu/~cappello/190B/homework/5/ -->
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="SHORTCUT ICON" href="http://www.cs.ucsb.edu/~cappello/images/favicon.ico">
+  <title>CS 290B: Java-Centric Cluster &amp; Concurrent Computing</title>
+  <link href="./index_files/site.css" rel="stylesheet" type="text/css">
+</head>
+
+<body><div id="StayFocusd-infobar" style="display:none;">
+    <img src="chrome-extension://laankejkbhbdhmipfmgcngdelahlfoji/common/img/eye_19x19_red.png">
+    <span id="StayFocusd-infobar-msg"></span>
+    <span id="StayFocusd-infobar-links">
+        <a id="StayFocusd-infobar-never-show">hide forever</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+        <a id="StayFocusd-infobar-hide">hide once</a>
+    </span>
+</div>
+
+<div id="container">
+
+<div id="top">
+
+<table cellspacing="0" cellpadding="0">
+  <tbody>
+    <tr>
+      <td><a href="https://gauchospace.ucsb.edu/courses/course/view.php?id=11904">
+      	<img alt="" src="./index_files/GauchoMoodleLogo-small.png"></a>
+  	</td>
+    </tr>
+  </tbody>
+</table>
+
+</div> <!-- end top -->
+
+<div id="navbar">
+	
+<table>
+  <tbody>
+    <tr>
+    	<td><a href="http://www.cs.ucsb.edu/~cappello/190B/">
+    		<img src="./index_files/home.gif" alt="Home" border="0"></a>
+			</td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/grades.shtml">Grades</a></td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/homework/">Homework</a></td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/papers.shtml">Papers</a></td>
+      <!--<td><a href="http://www.cs.ucsb.edu/~cappello/190B/people.shtml">People</a></td>-->
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/projects/">Projects</a></td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/resources/">Resources</a></td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/syllabus.shtml">Syllabus</a></td>
+    </tr>
+  </tbody>
+</table>
+
+</div> <!-- end navbar -->
+
+<div id="main">
+
+	<p>
+		<img class="signature" alt="Give a man a program, frustrate him for a day. &lt;i&gt;Teach&lt;/i&gt; a man to program, frustrate him for a lifetime." src="./index_files/buddhabrotPRN.jpg" width="180px">
+	</p>
+
+
+<h1>Assignment 5: A Distributed Branch &amp; Bound Framework</h1>
+
+<h2>Purpose</h2>
+
+<p>The purpose of this assignment is to:
+	</p><ul>
+		<li>enhance your API &amp; infrastructure to support branch-and-bound</li>
+		<li>Compute performance measures T<sub>1</sub> and T<sub>∞</sub>.</li>
+	</ul>
+<p></p>
+
+<h3>References on branch &amp; bound</h3>
+
+<ul>
+	<li><a href="http://en.wikipedia.org/wiki/Branch_and_bound">Wikipedia</a></li>
+	<li><a href="http://www.cs.ucsb.edu/projects/jicos/tutorial/branchandbound/index.html">
+		See "The Branch &amp; Bound Framework" in the Jicos Tutorial</a>
+	</li>
+</ul>
+
+<!--
+<h2>Paper Summary</h2>
+
+<p>
+	Submit a 1-page summary, entirely in your own words, of the paper 
+	"<a href="http://cs.ucsb.edu/~cappello/lectures/branchAndBound/aam_cappello.pdf">
+	A Development and Deployment Framework for Distributed Branch &amp; Bound</a>."
+</p>
+-->
+
+<h2>Specification: Branch &amp; Bound Framework</h2>
+
+<center>
+<p><img src="./index_files/branch-and-bound.png" alt="branch &amp; bound on traveling salesman problem" title="branch &amp; bound on traveling salesman problem" width="350px"></p>
+<p>
+	Design &amp; implement a <a href="http://en.wikipedia.org/wiki/Software_framework">framework</a>
+	for branch &amp; bound (B&amp;B) applications that can be applied to TSP (see below). 
+</p>
+</center>
+
+<h3>Design Document</h3>
+
+<p> 
+	Create a design document that :
+	</p><ul>
+		<li>Briefly describes your design of the API and infrastructural enhancements described below;</li>
+		<li>Identify <i>essential</i> design issues, and how your approach to them is manifested in your object-oriented design.</li>
+	</ul>
+	
+	Figures are welcome. 
+	This should be no more than 1 or 2 pages.
+<p></p>
+
+<h3>Shared object</h3>
+
+<p>Enable the application programmer to establish A <i>shared</i> object accessible to all tasks.</p>
+
+<p>
+Sometimes you want all tasks to have access to a common set of data whose value <i>can change</i> during the course of the computation. 
+In distributed computations where <i>performance is a prime goal</i>,
+it may be inappropriate to provide shared objects in the conventional sense.
+Here, we provide a weaker form of sharing that is compatible with high performance:
+</p>
+
+<p>
+An object that is shared among all of a computation's unfinished tasks,
+and whose value, when changed by any task, is propagated with <i>best
+effort</i> to all unfinished tasks.
+</p> 
+
+<p>
+This limited kind of sharing is of limited value.
+Branch &amp; bound however is an important combinatorial optimization
+technique that benefits from this kind of sharing.
+</p>
+
+<p>
+When is a proposed update to a shared object accepted? We cannot use
+the time that the update was proposed; there is no single clock in a
+distributed system. Design &amp; implement an API for such a shared object that does not depend on
+any notion of global time, but which makes sense in the context of a given application.
+</p>
+
+<p>
+For example, in the TSP, the cost of the best known solution at any point in time can be shared among the tasks. 
+Between 2 such costs c<sub>1</sub> and c<sub>2</sub>, define c<sub>1</sub> as newer than c<sub>2</sub> if and only if c<sub>1</sub> &lt; c<sub>2</sub>: <i>a lower cost is a newer cost</i>. 
+In branch and bound, this value may be used to decide if a particular subtree of the search tree can be pruned. 
+Thus, sharing the cost of the best known solution enhances the pruning ability of ready tasks and concurrently
+executing tasks that are exploring disjoint parts of the search tree.
+Indeed, this improvement in pruning is essential to the efficiency of distributed B&amp;B.
+</p>
+
+<h3>API</h3>
+
+<p>
+	One general approach to distribution of the shared object is to piggy back its current value from:
+	</p><ul>
+		<li>the Space to the Computer/Worker when the Space sends a Task to a Computer/Worker</li>
+		<li>the Computer/Worker to the Space when the Computer/Worker sends a Result to the Space.</li>
+	</ul> 
+<p></p>
+
+<p>
+	Alternatively, one may fully embrace "best" effort" and try to distribute the newer shared value as soon as it is detected.
+</p>
+
+<p>
+	The discussion below is crude and preliminary. You will want to do it differently as you dive into the details.
+	Also, the discussion below neither carefully nor fully uses generics.
+	You however may want to do so to ensure at compile time that you are using your objects correctly.
+</p>
+
+<p>
+Modify as you see fit the Space API to support the shared object.
+One possibility is to augment the Space interface with the following method:
+</p>
+
+<pre>  void setShared( Shared shared )
+</pre>
+
+<p>
+<b>Semantics:</b> If a Task object is sent to the Space after the setShared method returns, it has access to that shared object.
+Alternatively, you might combine putTask, takeResult, and setShared:
+</p>
+
+<pre>  Result&lt;T&gt; compute( Task&lt;T&gt; task, Shared shared )
+</pre>
+
+<p><b>Semantics:</b></p>
+
+<ol>
+    <li>Set the Shared object.</li>
+    <li>Execute the task, blocking until its Result is returned.</li>
+</ol>
+
+<p>
+Modify the Task interface so that its execute method has access to the shared object.
+The API can include an abstract base TaskImpl class that implements the Task interface.
+Two possibilities are, among others:
+</p>
+
+<pre>	private Computer computer;
+
+	abstract public &lt;T&gt; Result&lt;T&gt; execute();
+	public Object getShared() { return computer.getShared(); }
+	protected void setShared( Shared shared ) { computer.setShared( shared ); }	
+	void   setComputer( Computer computer ) { this.computer = computer; }
+</pre>
+
+<p>
+<b>Semantics:</b> All tasks have access to a shared object.
+To propagate a <i>newer</i> shared object to other tasks, the task invokes its setShared method.
+The computer.setShared method propagates the proposed newer shared object to the Space <i>only if</i>
+the proposed shared object <i>is newer than</i> the computer's existing shared object.
+The Space similarly <i>propagates</i> a shared object to computers
+<i>only if</i> it is <i>newer than</i> the Space's shared object.
+</p>
+
+<p>Alternatively, but still using a base TaskImpl class, you may revise the execute method:</p>
+
+<pre>  public &lt;T&gt; Result&lt;T&gt; execute( Shared shared )
+  
+  protected void setShared( Shared shared ) { computer.setShared( shared ); }
+  
+  void setComputer( Computer computer ) { this.computer = computer; }
+</pre>
+
+<p>
+	The setComputer method exists only to help the implementation of the TaskImpl setShared method. 
+	Task classes that extend TaskImpl do not have access to it.
+</p>
+
+<p>Modify either Space2Computer and/or Space to support distributing the Shared object.</p>
+
+<!--
+
+<p>
+One possible design involves a Shared interface. The idea is as
+follows. The client sends the computation's input and its initial Shared
+object to the Space. For example,
+</p>
+
+<p style="margin-left: 40px;"><span style="font-family: monospace; color: rgb(0, 0, 153);">setEnvironment( Object input, Shared shared )</span></p>
+
+<p>and/or&nbsp;</p>
+
+<p style="margin-left: 40px;"><span style="font-family: monospace; color: rgb(0, 0, 153);">TaskId setEnvironment( Task task, Object input, Shared shared ) </span></p>
+<p>and/or</p>
+<p style="margin-left: 40px;"><span style="font-family: monospace; color: rgb(0, 0, 153);">Result compute( Task task, Object input, Shared shared )</span>, a blocking method that returns task's Result object.&nbsp;</p>
+
+<p>The main idea is to set the input and Shared on the Space and the Computer (possibly lazily). Tasks have new attributes:</p>
+
+<div style="margin-left: 40px; font-family: monospace; color: rgb(0, 0, 153);">private Object input;<span style="font-family: monospace; color: rgb(0, 0, 153);"><br>
+
+private Shared shared;</span><span style="font-family: monospace; color: rgb(0, 0, 153);"><br>
+
+private Computer computer;</span></div>
+
+<p>
+They also have set methods for these fields. When the Space sends a
+Computer a Task associated with an input and a shared object that are
+new, from the Computer's point of view, the Space sets that Task's
+input and shared attributes; otherwise, it leaves these attributes
+values null. Then, in the Computer's execute task method<span style="font-family: monospace; color: rgb(0, 0, 153);"></span>,&nbsp; the code <span style="font-style: italic; color: rgb(153, 0, 0);">might</span> look like:
+</p>
+
+
+<div style="margin-left: 40px;">&nbsp;<span style="font-family: monospace; color: rgb(0, 0, 153);">. . .<br style="font-family: monospace; color: rgb(0, 0, 153);">
+
+
+</span><span style="font-family: monospace; color: rgb(0, 0, 153);">if ( task.getInput() != null )</span><span style="font-family: monospace; color: rgb(0, 0, 153);"></span><br style="font-family: monospace; color: rgb(0, 0, 153);">
+
+
+<span style="font-family: monospace; color: rgb(0, 0, 153);">{ </span><br style="font-family: monospace; color: rgb(0, 0, 153);">
+
+
+<span style="font-family: monospace; color: rgb(0, 0, 153);">&nbsp;&nbsp; input = task.getInput();</span><br style="font-family: monospace; color: rgb(0, 0, 153);">
+
+
+<span style="font-family: monospace; color: rgb(0, 0, 153);">}</span><br style="font-family: monospace; color: rgb(0, 0, 153);">
+
+
+<span style="font-family: monospace; color: rgb(0, 0, 153);">if ( task.getShared() != null )</span><span style="font-family: monospace; color: rgb(0, 0, 153);"></span><span style="font-family: monospace; color: rgb(0, 0, 153);"></span><br style="font-family: monospace; color: rgb(0, 0, 153);">
+
+
+<span style="font-family: monospace; color: rgb(0, 0, 153);">{ </span><br style="font-family: monospace; color: rgb(0, 0, 153);">
+
+
+<span style="font-family: monospace; color: rgb(0, 0, 153);">&nbsp;&nbsp; shared = task.getShared();</span><br style="font-family: monospace; color: rgb(0, 0, 153);">
+
+
+<span style="font-family: monospace; color: rgb(0, 0, 153);">}</span><br style="font-family: monospace; color: rgb(0, 0, 153);">
+
+
+<span style="font-family: monospace; color: rgb(0, 0, 153);">. . .<br>
+
+
+task.setInput( input );<br>
+
+
+task.setShared( shared );<br>
+
+
+</span><span style="font-family: monospace; color: rgb(0, 0, 153);">task.setComputer( this );<br>
+
+
+long startTime = System.nanoTime();<br style="font-family: monospace; color: rgb(0, 0, 153);">
+
+
+</span><span style="font-family: monospace; color: rgb(0, 0, 153);">Object value = task.execute();<br>
+
+
+</span><span style="font-family: monospace; color: rgb(0, 0, 153);">long taskDuration = System.nanoTime() - startTime;</span></div>
+
+-->
+
+<p>A possible Shared interface:</p>
+
+<ul>
+	<li>boolean isOlderThan( Shared that ), returns true if <i>this</i> shared object is <i>older</i> than <i>that</i> shared object.</li>
+	<li>Method get(), returns the object that is being shared.</li>
+</ul>
+
+
+<!--<p><b>Advice:</b> Make objects that implement Shared <i>immutable</i> to facilitate multithreading.</p>-->
+
+<p>
+When a <i>Task's execute method</i> wants to convey a new value for the Shared object to other Tasks, 
+it invokes setShared to <i>replace</i> the existing Shared object with the new one:
+</p>
+
+<pre>	
+	setShared( new IntShared( minCost ) );
+	
+</pre>
+
+<p>
+The Computer's setShared method is responsible for confirming that the proposed shared object is indeed newer, by using the isOlderThan method. 
+For example, its implementation might be:
+</p>
+
+<pre>
+	synchronized void setShared( Shared that )
+	{
+		if ( this.shared.isOlderThan( that ) )
+		{
+		    shared = that;
+		    space.setShared( shared ); // space refers to proxy for remote space
+		}		
+	}
+</pre>
+
+<p>
+When the Space gets a proposed Shared object from a Computer, it similarly tests to see if it is indeed newer, and, if so, it sends this to all 
+Computers, possibly excepting the Computer that sent it the proposed Shared.
+</p>
+
+<!--
+<p>
+Avoid redundant setShared invocations. For example, if a Space
+invokes a method on a Computer to set its Shared object, the Computer
+should not then invoke a method on the Space to set its Shared object.
+You may wish to have Spaces not use setShared, but instead use, say, <span style="color: rgb(0, 0, 153); font-family: monospace;">updateShared( Shared )</span>,
+so that when a Space changes the Computer's Shared, it does not prompt
+the Computer to propose a change to the Space's shared.
+</P>
+
+-->
+
+<h3>Lower bounds</h3>
+
+<p>
+	The object-oriented design should support lower bounds that are, at least somewhat, pluggable: 
+	The lower bound technique for a particular run can be swapped in and out by changing a LowerBound constructor.
+</p>
+<p>
+	Implement the Partial Tour lower bound.
+	<!-- 
+	Also implement a Zero lower bound, that always returns a lower bound of 0.0, 
+	which can be used to get meaningful data on how effective your partial tour lower bound is compared to not computing a lower bound.
+	-->
+</p>
+<p>
+	For 2 points of extra credit, implement a stronger lower bound, such as the 2 least-cost arcs lower bound.
+	For full credit, the time complexity of your update procedure (when a new city is added to the partial tour) is O( 1 ).
+</p>
+
+
+<h3>Performance measures T<sub>1</sub> and T<sub>∞</sub></h3>
+
+<p>
+	Your system should compute and return, for each task, its T<sub>1</sub> and T<sub>∞</sub> performance measures, as defined in the Cilk paper.
+	These can be defined recursively:
+	Let T be a tssk and let T<sub>X</sub> be defined as the execution time of T as seen by the thread that invokes its execute method.
+	Then
+	</p><ul>
+		T<sub>1</sub> = T<sub>X</sub>, if T is <i>atomic</i>; <br>
+		T<sub>1</sub> = T<sub>X</sub> + T<sup>C</sup><sub>X</sub> + sum{ T<sup>S</sup><sub>1</sub> } over its subtasks T<sup>S</sup>, 
+		if T is <i>non-atomic</i>,
+		where T<sup>C</sup> is the compose task spawned by T.
+	</ul>
+	
+	<ul>
+		T<sub>∞</sub> = T<sub>X</sub>, if T is <i>atomic</i>; <br>
+		T<sub>∞</sub> = T<sub>X</sub> + T<sup>C</sup><sub>X</sub> + max{ T<sup>S</sup><sub>∞</sub> } over its subtasks T<sup>S</sup>, 
+		if T is <i>non-atomic</i>,
+		where T<sup>C</sup> is the compose task spawned by T.
+	</ul>
+<p></p>
+
+<p>
+	The Cilk papger defines <i>average parallelism</i> as T<sub>1</sub> / T<sub>∞</sub>.
+	Using your computed values to determine average parallelism for a sequence of problem sizes, you could approximate average parallelism as a function of the problem size, and predict the maximum number of processors that would be helpful to use for a problem
+	of the given size.  
+	For simple tasks, like computing the <i>n</i><sup>th</sup> Fibonacci number, arriving at such a function could be done mostly analytically.
+	We can discuss this in class.
+</p>
+
+
+<h2>Application</h2>
+
+<h3>Tsp</h3>
+
+<!--
+<p>
+	Implement a lower bound for the Tsp that is stronger than just the cost of a partial tour.
+	For example, implement the lower bound that uses the 2 shortest edges incident on each city.
+	Implement your lower bound so that, as the partial tour increases, the lower bound is strengthened (increases).
+</p>
+-->
+
+<p>
+	For the Tsp, use the partial tour lower bound.
+	Implement your lower bound so that, as the partial tour increases, the lower bound is strengthened (increases).
+</p>
+
+<h2>The client</h2>
+
+<p>
+	Define a client according to the specification of the previous assigment.
+	However, for the Euclidean Tsp instance, use the following list of 16 cities.
+	Each line that follows has the <i>x</i> and <i>y</i> coordinates of a city, starting  with city 0 and ending with city 15:
+</p>
+
+<pre>double[][] cities = 
+{
+	{ 1, 1 },
+	{ 8, 1 },
+	{ 8, 8 },
+	{ 1, 8 },
+	{ 2, 2 },
+	{ 7, 2 },
+	{ 7, 7 },
+	{ 2, 7 },
+	{ 3, 3 },
+	{ 6, 3 },
+	{ 6, 6 },
+	{ 3, 6 },
+	{ 4, 4 },
+	{ 5, 4 },
+	{ 5, 5 },
+	{ 4, 5 }
+}
+</pre>
+
+<p>
+If you plot these cities, then (<i>I think</i>) a minimal tour is: 0, 4, 8, 12, 13, 9, 5, 1, 2, 6, 10, 14, 15, 11, 7, 3. 
+(<i>Since I have arrived at this solution by inspection, this may not be optimal.</i>) 
+The cost of this tour is 16 + 12 sqrt(2), which is approximately 32.97.
+</p>
+
+<h2>Experiments</h2>
+
+<p>
+	Perform the experiments as specified in your previous assignment where both multiprocessor and communication ameliorationbut are turned on, but only for TSP, and only for c = 1, 4, and 16.
+</p>
+<p>
+	Report T<sub>1</sub> and T<sub>∞</sub> for each run. 
+	In your experiments, should these measurements be the same, independent of the value of c? 
+	Anayze your actual performance measurements vs. what we would expect from their definitions.
+</p>
+
+<h2>Deliverables</h2>
+
+<p>
+	Make sure that your documents index includes or links to your:
+</p>
+
+<ul>
+	<!--
+	<li>Paper summary</li>
+	-->
+	<li>Design document</li>
+	<!--<li>Administrative information: readme and build.xml files</li>-->
+	<!--<li>Javadoc: The API and Task/Result classes.</li>-->
+	<li>Experimental results:
+		<ul>
+			<li>Parallel efficiency graph.</li>
+			<li><i>Analysis</i> of parallel [in]efficiencies &amp; performance measures.</li>
+		</ul>
+	</li>    
+</ul>  
+
+
+</div> <!-- end main -->
+
+<br>
+<hr size="1" noshade="noshade">
+
+<table style="background-color: rgb(254, 254, 254); width: 800px;">
+  <tbody>
+    <tr style="color: rgb(0, 0, 102);">
+        <td style="text-align: left;">
+          &nbsp;<a href="mailto:cappello@cs.ucsb.edu" class="nounderline"><small>cappello@cs.ucsb.edu
+        </small></a></td>
+        <td style="text-align: right;">
+          <small>© Copyright 2010 Peter Cappello</small>
+          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+        </td>
+        <td style="text-align: right;">
+          <small>2016.05.18</small>
+          &nbsp; <!-- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; -->
+        </td>
+        <!-- <td style="text-align: right;"><small>805.893.4383</small>&nbsp;</td> -->
+    </tr>
+  </tbody>
+</table>
+
+</div> <!-- end container-->
+
+
+
+</body></html>

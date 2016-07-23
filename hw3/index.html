@@ -1,0 +1,321 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0049)http://www.cs.ucsb.edu/~cappello/190B/homework/3/ -->
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="SHORTCUT ICON" href="http://www.cs.ucsb.edu/~cappello/images/favicon.ico">
+  <title>CS 190B: PA 3</title>
+  <link href="./index_files/homePage.css" rel="stylesheet" type="text/css">
+</head>
+
+<body><div id="StayFocusd-infobar" style="display:none;">
+    <img src="chrome-extension://laankejkbhbdhmipfmgcngdelahlfoji/common/img/eye_19x19_red.png">
+    <span id="StayFocusd-infobar-msg"></span>
+    <span id="StayFocusd-infobar-links">
+        <a id="StayFocusd-infobar-never-show">hide forever</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+        <a id="StayFocusd-infobar-hide">hide once</a>
+    </span>
+</div>
+
+<div id="container">
+
+<div id="top">
+
+<table cellspacing="0" cellpadding="0">
+  <tbody>
+    <tr>
+      <td><a href="https://gauchospace.ucsb.edu/courses/course/view.php?id=11904">
+      	<img alt="" src="./index_files/GauchoMoodleLogo-small.png"></a>
+  	</td>
+    </tr>
+  </tbody>
+</table>
+
+</div> <!-- end top -->
+
+<div id="navbar">
+	
+<table>
+  <tbody>
+    <tr>
+    	<td><a href="http://www.cs.ucsb.edu/~cappello/190B/">
+    		<img src="./index_files/home.gif" alt="Home" border="0"></a>
+			</td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/grades.shtml">Grades</a></td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/homework/">Homework</a></td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/papers.shtml">Papers</a></td>
+      <!--<td><a href="http://www.cs.ucsb.edu/~cappello/190B/people.shtml">People</a></td>-->
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/projects/">Projects</a></td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/resources/">Resources</a></td>
+      <td><a href="http://www.cs.ucsb.edu/~cappello/190B/syllabus.shtml">Syllabus</a></td>
+    </tr>
+  </tbody>
+</table>
+
+</div> <!-- end navbar -->
+
+<div id="main">
+
+	<p>
+		<img class="signature" alt="Give a man a program, frustrate him for a day. &lt;i&gt;Teach&lt;/i&gt; a man to program, frustrate him for a lifetime." src="./index_files/buddhabrotPRN.jpg" width="180px">
+	</p>
+
+
+<h1>Assignment 3: A Divide-and-Conquer API</h1>
+
+<h2>Purpose</h2>
+
+<ul>
+  <li>Expand your experience working with Java RMI</li>
+  <li>Augment the functionality of your Java-centric cluster computing system to support a divide-and-conquer (DAC) API.</li>
+</ul>
+
+
+<!--
+<h2>Paper Summary</h2>
+
+<p>Submit a 1-page summary, entirely in your own words, for each of the following papers:</p>
+<ol>
+	<li>Cilk paper</li>
+	<li>CX paper</li>
+</ol>
+-->
+<!--
+<p>Submit a 1-page summary, entirely in your own words, of the Cilk paper</p>
+-->
+
+<h2>Specification</h2>
+
+
+<h3>The DAC API</h3>
+
+<!--
+<p>
+	Design a DAC API. For design ideas, please see the Cilk paper, the CX paper, and the JICOS API, illustrated in the 
+	<a href="http://www.cs.ucsb.edu/projects/jicos/tutorial/">Tutorial section of the JICOS web site</a>. 
+	Cilk allows any acyclic directed graph of threads. 
+	Your api needs to support only "fully strict" (i.e., purely DAC) programs. You may require that a task either:
+  Design a DAC API. 
+  For design ideas, please see the Cilk paper, the CX paper, and the JICOS API, 
+  illustrated in the <a href="http://www.cs.ucsb.edu/projects/jicos/tutorial/">Tutorial section of the JICOS web site</a>. 
+  Cilk allows any acyclic directed graph of threads. 
+  Your api needs to support only "fully strict" (i.e., purely DAC) programs. 
+  You may require that a task either:
+</p>
+-->
+
+<p>
+	Design a DAC API. For design ideas, please see the Cilk paper. 
+	Cilk allows any acyclic directed graph of threads. 
+	Your api needs to support <i>only</i> "fully strict" (i.e., purely DAC) programs. 
+	You may require that a task either:
+</p>
+
+<ul>
+    <li>Produces a single result object as its output</li>
+    <li>
+    	Constructs:
+    	<ul>
+    		<li>subtasks</li>
+    		<li>
+    			a "compose" task whose <i>inputs</i> are the single <i>output</i> from each of the subtasks
+    			and whose <i>output</i> is some function of its inputs (i.e., subtask outputs).
+    		</li>
+    	</ul>
+    </li>
+</ul>
+
+<center><img src="./index_files/fibdag.gif" alt="Fibonacci dag: n = 4" title="Fibonacci dag, for n = 4." width="370px"></center>
+
+<p>
+The implementation of this API involves the cooperation of the Task, the Computer, and the Space. 
+Please look at the specification of a <i>Closure</i> in the Cilk paper. 
+Relate this to the infomation requirements of a Task in your system. 
+The Space needs to distinguish between tasks that have all their arguments 
+(and thus are ready to be executed by Computers) from those that do not. 
+The scheduling algorithm you use to <i>distribute</i> ready tasks to Computers is unspecified: 
+You can do whatever you want.
+</p>
+
+<p>
+If task <i>t</i> computes an output <i>o</i> (as opposed to computing subtasks), 
+it must communicate <i>o</i> to its successor task <i>s</i>, 
+which needs <i>o</i> as an <i>input</i>:
+When <i>t</i> produces <i>o</i>, the Space needs to know which task is <i>s</i>.
+Thus, you may need some form of task identifier. 
+The Space also needs to know which of <i>s</i>'s inputs <i>o</i> 
+is, so the Space can set the appropriate input element of <i>s</i>.
+</p>
+
+<p>
+	<i>If your DAC api is different for different DAC problems, then it is not truly an "api."</i> 
+</p>
+
+<h3>Fault tolerance</h3>
+
+<p>
+	Although your system needs to tolerate faulty Computers in the same sense as the previous programming assignment, 
+	it does not need to be robust in the presence of faulty <i>application</i> programs.
+</p>
+
+<!--
+<h3>Performance measures T<sub>1</sub> and T<sub>&infin;</sub></h3>
+
+<p>
+	Your system should compute and return, for each task, the T<sub>1</sub> and T<sub>&infin;</sub> performance measures, as defined in the Cilk paper.
+	The latter can be defined recursively:
+	Let T be a tssk
+	<ul>
+		T<sub>&infin;</sub> = T<sub>1</sub>, if T is <i>atomic</i>; <br />
+		T<sub>&infin;</sub> = T<sup>D</sup><sub>1</sub> + T<sup>C</sup><sub>1</sub> + max{ T<sup>S</sup><sub>&infin;</sub> } over all its subtasks T<sup>S</sup>, 
+		if T <i>decomposes into subtasks and a compose task</i>,
+		where T<sup>D</sup> is the decompose task and T<sup>C</sup> is the corresponding compose task;
+	</ul>
+</p>
+-->
+
+<h3>Application development</h3>
+
+<ul>
+    <li>Define the <i>n</i>th <a href="http://en.wikipedia.org/wiki/Fibonacci_number">Fibonacci number</a>, F(n), recursively:
+        <ol>
+            <li>For <i>0 ≤ n &lt; 2, F(n) = n</i>.</li>
+            <li>For <i>2 ≤ n, F(n) = F(n - 1) + F(n - 2)</i>.</li>
+        </ol> 
+        Use your DAC api to program a doubly recursive computation of the <i>n</i>th Fibonacci number.
+        By doubly recursive, I mean F(n - 1) and F(n - 2) are distinct subtasks of <i>F(n)</i>, for <i>n ≥ 2</i>)
+    </li>
+    <li>Refactor TSP to use your DAC API.</li>
+</ul>
+
+
+
+<h3>The clients</h3>
+
+<p>
+	By <i>client</i>, I mean the class that <i>uses</i> the Space to solve a problem.
+	You may wish to refactor your work from previous assignments to serve this purpose.
+	</p>
+<p>For each application, define a client that:</p>
+
+<ul>
+  <li>gets the SpaceImpl's machine domain name, as done in previous programming assignments;</li>
+  <li>gets a remote reference to the Space service from the rmiregistry on the Space's physical machine.</li>    
+  <li>instantiates a problem instance;</li>       
+  <ul>
+    <li>F(16)</li>
+    <li>EuclideanTsp problem instance paramenter values: Same as the last assignment.</li>     
+  </ul>
+  <li>logs the arguments.</li>
+  <li>sends the <i>root</i> task T to the Space;</li>
+  <li>
+    	retrieves the root result from the Space
+    	</li><li>displays the solution to the root task (i.e., the problem)</li>
+    	<!-- Also log the root task's T<sub>1</sub> and T<sub>&infin;</sub>, and its average parallelism: T<sub>1</sub> / T<sub>&infin;</sub>. -->
+    	<li>logs the root task's elapsed time as seen by the <i>client</i>.</li>
+  
+</ul>
+
+<h2>Experiments</h2>
+
+<p>
+	Perform the same experiments as you did in the last programming assignment for TSP, but adding the Fibonacci application, 
+	and for <i>c</i> = 1, 2, and 4 (Computers) for both applications.
+	Although it is fine for the client and Space to run in separate JVMs on the same physical machine,
+	the Space and each computer run in different physical machines.
+	<!--For the case of <i>c = 1</i>, report job completion time for just 1 deployment scenario:
+	the Space and computer run on different machines.
+	-->
+</p>
+<!--
+<ul>
+    <li>client, Space, and computer are all instantiated in the same JVM</li>
+    <li>client, Space, and computer are instantiated on different JVMs running on the same machine</li>
+    <li>client, Space, and computer run on different machines.</li>
+</ul>
+-->
+<p>
+	Let P be a problem instance (e.g., an instance of the TSP).
+	Let T<sub>C</sub> be the elapsed time to complete P using C Computers.
+	For each problem, P, plot P's parallel efficiency: E<sub>P</sub>{C) = T<sub>1</sub> / (C T<sub>C</sub>).
+</p>
+
+<!--
+<p>
+For the case of C = 1:
+</p>
+
+<ul>
+
+    <li>Run the client with the client, server, and 1 computer all instantiated in the same JVM. 
+        Call the elaped time T<sub>S</sub>. 
+    </li>
+
+    <li>Plot T<sub>S</sub>/ T<sub>1</sub>. What is this data saying?</li>
+
+</ul>
+-->
+<!--
+
+<h2>Analysis</h2>
+
+<ul>
+  <li>What do you see as the advantages/disadvantages of your task scheduler?</li>
+  <li>How, in retrospect, might you change the infrastructure to improve your parallel efficiency?</li>
+  <li>What issues are involved in generalizing your infrastructure to a network of Spaces?</li>
+</ul>-->
+
+<h2>Design</h2>
+
+<p>
+	Provide a design document that is at most 2 pages in which you:
+	</p><ol>
+		<li>Identify the <i>key</i> deisgn issues;</li>
+		<li>Provide an architecture and high level object-oriented design - diagrams welcome;</li>
+		<li>Explain how your architecture &amp; design address the key issues that you identified.</li>
+	</ol>
+<p></p>
+
+
+<h2>Deliverables</h2>
+
+<p>
+	The deliverables are the same as those for the previous programming assignment. 
+	Make sure that you provide your:
+</p>
+
+<ul>
+	<li>source and any supporting library;</li>
+	<li>efficiency graphs described in the Experiments section above;</li>
+	<li>design document;</li>
+	<li>build.xml with Ant targets for all operations needed in your demonstration.</li>
+</ul> 
+
+
+</div> <!-- end main -->
+
+<br>
+<hr size="1" noshade="noshade">
+
+<table style="background-color: rgb(254, 254, 254); width: 800px;">
+  <tbody>
+    <tr style="color: rgb(0, 0, 102);">
+        <td style="text-align: left;">
+          &nbsp;<a href="mailto:cappello@cs.ucsb.edu" class="nounderline"><small>cappello@cs.ucsb.edu
+        </small></a></td>
+        <td style="text-align: right;">
+          <small>© Copyright 2010 Peter Cappello</small>
+          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
+        </td>
+        <td style="text-align: right;">
+          <small>2016.04.22</small>
+          &nbsp; <!-- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; -->
+        </td>
+        <!-- <td style="text-align: right;"><small>805.893.4383</small>&nbsp;</td> -->
+    </tr>
+  </tbody>
+</table>
+
+</div> <!-- end container-->
+
+
+
+</body></html>

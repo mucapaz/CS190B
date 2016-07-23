@@ -1,0 +1,181 @@
+<style type="text/css">
+
+<!--
+
+*{
+	margin:  0px; 
+	padding: 0px;
+}
+
+body 
+{
+	margin: 0px auto auto auto; /* Top, Right, Bottom, Left */
+	background-color: #FFFFFF;
+	font-family: arial, helvetica, tahoma, sans-serif;
+	font-size: 0.9em;
+	background-image: url(http://www.cs.ucsb.edu/common/images/background.jpg);
+	text-align: justify;
+    direction: ltr;
+}
+
+#container 
+{
+	width: 800px;
+	margin: 0px auto 0px auto; /* Top, Right, Bottom, Left */
+	border-style: double;
+	background-color: inherit;
+	color: inherit;
+}
+
+#container a:link, #container a:visited
+{
+	color: #000080;
+	font-weight:normal;
+	text-decoration: none;
+}
+
+#container a:hover { color: #008000; }
+
+pre,code { color: #0000A0; }
+
+td.left   { text-align: left; }
+td.center { text-align: center; }
+td.right  { text-align: right; }
+
+#top table 
+{ 
+	width: 100%;
+	height: 120px;
+	background-image: url(../images/head.jpg);
+	color: rgb(0, 0, 127);
+	font-size: 150%;
+}
+
+#navbar
+{
+	border-top:    1px solid #000000;
+	border-bottom: 1px solid #000000;
+}
+
+#navbar td { width: 266px; }
+
+#navbar td:hover { background-color: #F0F0FF;}
+
+#navbar table 
+{
+	background-color: #E0E0FF; /*  rgb(204, 204, 255); */
+	width: 100%; 
+	height: 30px;
+	text-align: center;
+}
+	
+#main 
+{
+	display: block;
+	margin:  0px auto 0px auto; /* Top, Right, Bottom, Left */
+	padding: 20px 0.5in 20px 0.5in; 	
+	text-align: inherit;
+	line-height: 125%;
+}
+
+#main h1, #main h2, #main h3 { color: rgb(0, 0, 127); }
+
+#main h2, #main h4 { color: rgb(127, 0, 0); }
+
+#main h2, #main h3, #main h4 { font-weight: normal; }
+
+#main h1 	
+{	
+			font-size: 150%;
+			font-weight: lighter;
+			text-align: center;
+			text-transform: uppercase;
+}
+
+#main h2 { font-size: 130%; }
+
+#main h3 { font-size: 120%; }
+#main h4 { color: #C00000; }
+
+#main h1, h2, ul { line-height: 140% }
+
+#main img.signature
+{	
+	float: right;
+	border: 1px solid #000000;
+	margin: 10px 10px 5px 10px;
+	padding: 5px;
+	background-color: #FFF;
+	
+	position: relative;
+	right: -0px;
+	bottom: -0px;
+} 
+
+#math
+{
+	padding: 0px 15px 0px 15px;
+	font-style: italics;
+	text-align: center;
+}
+
+#main table.center
+{ 
+	margin-left: auto; 
+	margin-right: auto;
+}
+
+#main img 
+{	
+	padding: 10px;
+	margin: 10px; 
+	border: 1px solid #000000;
+}
+
+#main th.grade { text-align: left; }
+
+.odd {
+  background-color: #efefef; /* #C3FDB8;  */
+}
+
+.even {
+  background-color: #ffffff;
+}
+.black {
+  background-color: #000000;
+}
+
+p.red 
+{
+	padding: 0px 15px 0px 15px;
+	color: rgb(127, 0, 0);
+	font-style: italics;
+}
+
+#foot
+{
+	width: 100%;
+	border-top: 1px solid #000000; 
+	text-align: center;
+	font-size: 90%;
+	color: rgb(0, 0, 127);
+	clear: both; 
+}
+
+#foot table 
+{
+	background-color: #E0E0FF; /*  rgb(204, 204, 255); */
+	width: 100%; 
+	height: 30px;
+	text-align: center;
+}
+
+#foot td { width: 267px }
+
+td.leftfoot    { text-align: left; }
+td.centerfoot  { text-align: center; }
+td.rightfoot   { text-align: right; }
+
+-->
+
+</style>
