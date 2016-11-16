@@ -8,5 +8,5 @@ The main focus of these project is to study Java Remote Method Invocation
 ## Executing
   - Setup on different computers:
   - Setup the build file before building & running the project. 
-  - Setup the IP and "client_file_codebase"
+    - Setup the IP and "client_file_codebase"
   
